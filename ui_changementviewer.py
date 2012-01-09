@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_changementviewer.ui'
 #
-# Created: Mon Jan  9 12:14:45 2012
+# Created: Mon Jan  9 14:54:21 2012
 #      by: PyQt4 UI code generator 4.8.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -139,7 +139,7 @@ class Ui_ChangementViewer(object):
     def retranslateUi(self, ChangementViewer):
         pass
 
-#import resources_rc
+import resources
 
 if __name__ == "__main__":
     import sys

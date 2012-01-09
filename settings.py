@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'settings.ui'
 #
-# Created: Mon Jan  9 11:39:20 2012
+# Created: Mon Jan  9 14:54:24 2012
 #      by: PyQt4 UI code generator 4.8.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -18,23 +18,24 @@ class Ui_settings(object):
     def setupUi(self, settings):
         settings.setObjectName(_fromUtf8("settings"))
         settings.resize(400, 300)
-        settings.setWindowTitle(QtGui.QApplication.translate("settings", "Dialog", None, QtGui.QApplication.UnicodeUTF8))
-        self.buttonBox = QtGui.QDialogButtonBox(settings)
-        self.buttonBox.setGeometry(QtCore.QRect(30, 240, 341, 32))
-        self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
-        self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
+        settings.setWindowTitle(QtGui.QApplication.translate("settings", "Settings", None, QtGui.QApplication.UnicodeUTF8))
         self.ltbFields = QtGui.QListWidget(settings)
         self.ltbFields.setGeometry(QtCore.QRect(130, 30, 256, 192))
         self.ltbFields.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
         self.ltbFields.setObjectName(_fromUtf8("ltbFields"))
         self.cmbLayers = QtGui.QComboBox(settings)
-        self.cmbLayers.setGeometry(QtCore.QRect(20, 40, 85, 27))
+        self.cmbLayers.setGeometry(QtCore.QRect(20, 30, 85, 27))
         self.cmbLayers.setObjectName(_fromUtf8("cmbLayers"))
+        self.btnApply = QtGui.QPushButton(settings)
+        self.btnApply.setGeometry(QtCore.QRect(290, 250, 97, 27))
+        self.btnApply.setText(QtGui.QApplication.translate("settings", "Apply", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnApply.setObjectName(_fromUtf8("btnApply"))
+        self.btnCancel = QtGui.QPushButton(settings)
+        self.btnCancel.setGeometry(QtCore.QRect(180, 250, 97, 27))
+        self.btnCancel.setText(QtGui.QApplication.translate("settings", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnCancel.setObjectName(_fromUtf8("btnCancel"))
 
         self.retranslateUi(settings)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), settings.accept)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), settings.reject)
         QtCore.QMetaObject.connectSlotsByName(settings)
 
     def retranslateUi(self, settings):

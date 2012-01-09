@@ -65,7 +65,6 @@ class ChangementViewer:
     def run(self):
         # create and show the dialog
         dlg = ChangementViewerDialog()
-        # show the dialog
         dlg.show
         #result = dlg.exec_()
         # See if OK was pressed
@@ -77,7 +76,7 @@ class ChangementViewer:
     def updateFields( self ):
         layName = unicode( self.settingsDialog.cmbLayers.currentText() )
         self.settingsDialog.ltbFields.clear()
-        if layName != "":
+        if layName != "Layers":
             vLayer = gettings.getVectorLayerByName( layName )
             lstFields = vLayer.dataProvider().fields()
             for i in lstFields:
@@ -99,3 +98,8 @@ class ChangementViewer:
             return
         # for tracking layers change
         QObject.connect( self.settingsDialog.cmbLayers, SIGNAL( "currentIndexChanged(QString)" ), self.updateFields )
+        layName = unicode( self.settingsDialog.cmbLayers.currentText() )
+        if layName != "Layers":
+            vLayer = gettings.getVectorLayerByName( layName )
+        QObject.connect(self.settingsDialog.btnApply, SIGNAL('clicked()'),self.iface.showLayerProperties(vLayer))
+        QObject.connect(self.settingsDialog.btnCancel, SIGNAL('clicked()'),self.settingsDialog.close) 
