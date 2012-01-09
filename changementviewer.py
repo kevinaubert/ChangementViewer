@@ -82,6 +82,14 @@ class ChangementViewer:
             for i in lstFields:
               self.settingsDialog.ltbFields.addItem( unicode( lstFields[i].name() ) )
               
+    def ApplyClicked(self):
+        layName = unicode( self.settingsDialog.cmbLayers.currentText() )
+        if layName != "Layers":
+            vLayer = gettings.getVectorLayerByName( layName )
+        else:
+            vLayer=self.iface.mapCanvas().currentLayer()
+        self.iface.showLayerProperties(vLayer)
+              
     def showSettingsDialog(self):
         # load the form
         path = os.path.dirname( os.path.abspath( __file__ ) )
@@ -98,8 +106,6 @@ class ChangementViewer:
             return
         # for tracking layers change
         QObject.connect( self.settingsDialog.cmbLayers, SIGNAL( "currentIndexChanged(QString)" ), self.updateFields )
-        layName = unicode( self.settingsDialog.cmbLayers.currentText() )
-        if layName != "Layers":
-            vLayer = gettings.getVectorLayerByName( layName )
-        QObject.connect(self.settingsDialog.btnApply, SIGNAL('clicked()'),self.iface.showLayerProperties(vLayer))
-        QObject.connect(self.settingsDialog.btnCancel, SIGNAL('clicked()'),self.settingsDialog.close) 
+        # load layer properties dialog        
+        QObject.connect(self.settingsDialog.btnCancel, SIGNAL('clicked()'),self.settingsDialog.close)
+        QObject.connect(self.settingsDialog.btnApply, SIGNAL('clicked()'),self.ApplyClicked)
