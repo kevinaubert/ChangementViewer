@@ -25,6 +25,7 @@ from qgis.core import *
 from PyQt4 import uic	
 from PyQt4 import QtGui
 import os, sys
+import pdb
 sys.path.append("~/.qgis/python")
 # Initialize Qt resources from file resources.py
 import resources
@@ -83,11 +84,16 @@ class ChangementViewer:
               self.settingsDialog.ltbFields.addItem( unicode( lstFields[i].name() ) )
               
     def updateSelectedFields (self ):
-        selection = self.settingsDialog.ltbFields.selectedItems()
-        print selection
+        layName = unicode( self.settingsDialog.cmbLayers.currentText() )
+        vLayer = gettings.getVectorLayerByName( layName )
+        lstFields = vLayer.dataProvider().fields()
+        myfields = self.settingsDialog.ltbFields
         self.settingsDialog.ltbSelectedFields.clear()
-        for i in len(selection):
-              self.settingsDialog.ltbSelectedFields.addItem( unicode( selection[i].text() ) )        
+        for i in range(len(myfields)):  
+            if myfields.item(i).isSelected() == True:
+                self.settingsDialog.ltbSelectedFields.addItem(lstFields[i].name())
+        #pyqtRemoveInputHook()
+        #pdb.set_trace()        
               
     def ApplyClicked(self):
         layName = unicode( self.settingsDialog.cmbLayers.currentText() )
