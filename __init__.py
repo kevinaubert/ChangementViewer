@@ -25,8 +25,6 @@ def description():
     return "Temporal evolution viewer for statistic visualisation"
 def version():
     return "Version 0.1"
-def icon():
-    return "icon.png"
 def qgisMinimumVersion():
     return "1.0"
 def classFactory(iface):

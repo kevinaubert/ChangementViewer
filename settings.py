@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'settings.ui'
 #
-# Created: Mon Jan  9 14:54:24 2012
+# Created: Tue Jan 10 12:19:13 2012
 #      by: PyQt4 UI code generator 4.8.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,7 +17,7 @@ except AttributeError:
 class Ui_settings(object):
     def setupUi(self, settings):
         settings.setObjectName(_fromUtf8("settings"))
-        settings.resize(400, 300)
+        settings.resize(687, 300)
         settings.setWindowTitle(QtGui.QApplication.translate("settings", "Settings", None, QtGui.QApplication.UnicodeUTF8))
         self.ltbFields = QtGui.QListWidget(settings)
         self.ltbFields.setGeometry(QtCore.QRect(130, 30, 256, 192))
@@ -34,6 +34,9 @@ class Ui_settings(object):
         self.btnCancel.setGeometry(QtCore.QRect(180, 250, 97, 27))
         self.btnCancel.setText(QtGui.QApplication.translate("settings", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
         self.btnCancel.setObjectName(_fromUtf8("btnCancel"))
+        self.ltbSelectedFields = QtGui.QListWidget(settings)
+        self.ltbSelectedFields.setGeometry(QtCore.QRect(410, 30, 256, 192))
+        self.ltbSelectedFields.setObjectName(_fromUtf8("ltbSelectedFields"))
 
         self.retranslateUi(settings)
         QtCore.QMetaObject.connectSlotsByName(settings)

@@ -53,7 +53,7 @@ class ChangementViewer:
         path = os.path.dirname( os.path.abspath( __file__ ) )
         self.dock = uic.loadUi( os.path.join( path, "ui_changementviewer.ui" ) )
         self.iface.addDockWidget( Qt.BottomDockWidgetArea, self.dock )
-        QObject.connect(self.dock.btnSettings, SIGNAL('clicked()'),self.showSettingsDialog) 
+        QObject.connect(self.dock.btnSettings, SIGNAL('clicked()'),self.showSettingsDialog)
 
     def unload(self):
         # Remove the plugin menu item and icon
@@ -63,9 +63,9 @@ class ChangementViewer:
     # run method that performs all the real work
     
     def run(self):
+        self.dock = True
         # create and show the dialog
-        dlg = ChangementViewerDialog()
-        dlg.show
+        #ChangementViewerDialog.
         #result = dlg.exec_()
         # See if OK was pressed
         #if result == 1:
@@ -81,6 +81,13 @@ class ChangementViewer:
             lstFields = vLayer.dataProvider().fields()
             for i in lstFields:
               self.settingsDialog.ltbFields.addItem( unicode( lstFields[i].name() ) )
+              
+    def updateSelectedFields (self ):
+        selection = self.settingsDialog.ltbFields.selectedItems()
+        print selection
+        self.settingsDialog.ltbSelectedFields.clear()
+        for i in len(selection):
+              self.settingsDialog.ltbSelectedFields.addItem( unicode( selection[i].text() ) )        
               
     def ApplyClicked(self):
         layName = unicode( self.settingsDialog.cmbLayers.currentText() )
@@ -103,9 +110,11 @@ class ChangementViewer:
         self.settingsDialog.cmbLayers.addItems( lstLayers )
         if len(lstLayers) == 0:
             QtGui.QMessageBox.warning(None,'Error','There are no unmanaged vector layers in the project !')
-            return
+            pass
         # for tracking layers change
         QObject.connect( self.settingsDialog.cmbLayers, SIGNAL( "currentIndexChanged(QString)" ), self.updateFields )
+        # for tracking fields selection
+        QObject.connect( self.settingsDialog.ltbFields, SIGNAL( 'itemSelectionChanged()' ), self.updateSelectedFields )        
         # load layer properties dialog        
         QObject.connect(self.settingsDialog.btnCancel, SIGNAL('clicked()'),self.settingsDialog.close)
         QObject.connect(self.settingsDialog.btnApply, SIGNAL('clicked()'),self.ApplyClicked)
