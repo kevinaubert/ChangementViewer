@@ -84,23 +84,32 @@ class ChangementViewer:
               self.settingsDialog.ltbFields.addItem( unicode( lstFields[i].name() ) )
               
     def updateSelectedFields (self ):
-        # update selected fields
+        # update and range selected fields by years
         layName = unicode( self.settingsDialog.cmbLayers.currentText() )
         vLayer = gettings.getVectorLayerByName( layName )
         lstFields = vLayer.dataProvider().fields()
         myfields = self.settingsDialog.ltbFields
         self.settingsDialog.ltbSelectedFields.clear()
+        self.settingsDialog.tabSelectedFields.clear()
         for i in range(len(myfields)):  
             if myfields.item(i).isSelected() == True:
-                #self.settingsDialog.ltbSelectedFields.addItem(lstFields[i].name())
-                self.settingsDialog.ltbSelectedFields.addItem(unicode(re.findall(r'\d+',lstFields[i].name())))
-        #range selected fields
-        #for i in lstFields:
-        #    re.findall(r'\d+',lstFields[i].name())
-            
-        #pyqtRemoveInputHook()
-        #pdb.set_trace()      
-        
+                date=re.findall(r'\d+',lstFields[i].name())
+                if len(date)!=1:
+                    QtGui.QMessageBox.warning(None,'Error','Warning : there is no date information for this attribute !')
+                    pass                    
+                else:
+                    for u in range(len(date)):
+                        final_list=[]
+                        final_list.append([lstFields[i].name(),date[u]])
+                        final_list = sorted(final_list, key=lambda date: date[1])
+                        #self.settingsDialog.ltbSelectedFields.addItem(lstFields[i].name())
+                        self.settingsDialog.ltbSelectedFields.addItem(date[u])
+                        self.settingsDialog.ltbSelectedFields.sortItems()
+        print final_list[u]
+                        #self.settingsDialog.tabSelectedFields.setItem(u,0,final_list[u]///final_list.__getitem__(u))
+                        #erreur : impossible de mettre un QListWidgetItem, il faut un QTableWidgetItem..."""
+            #pyqtRemoveInputHook()
+            #pdb.set_trace()      
               
     def ApplyClicked(self):
         layName = unicode( self.settingsDialog.cmbLayers.currentText() )
