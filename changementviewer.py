@@ -84,13 +84,13 @@ class ChangementViewer:
               self.settingsDialog.ltbFields.addItem( unicode( lstFields[i].name() ) )
               
     def updateSelectedFields (self ):
-        # update and range selected fields by years
+        # update selected fields
         layName = unicode( self.settingsDialog.cmbLayers.currentText() )
         vLayer = gettings.getVectorLayerByName( layName )
         lstFields = vLayer.dataProvider().fields()
-        myfields = self.settingsDialog.ltbFields
-        self.settingsDialog.ltbSelectedFields.clear()
+        myfields = self.settingsDialog.ltbFields     
         self.settingsDialog.tabSelectedFields.clear()
+        self.settingsDialog.tabSelectedFields.setRowCount(0)
         for i in range(len(myfields)):  
             if myfields.item(i).isSelected() == True:
                 date=re.findall(r'\d+',lstFields[i].name())
@@ -99,17 +99,25 @@ class ChangementViewer:
                     pass                    
                 else:
                     for u in range(len(date)):
-                        final_list=[]
-                        final_list.append([lstFields[i].name(),date[u]])
-                        final_list = sorted(final_list, key=lambda date: date[1])
-                        #self.settingsDialog.ltbSelectedFields.addItem(lstFields[i].name())
-                        self.settingsDialog.ltbSelectedFields.addItem(date[u])
-                        self.settingsDialog.ltbSelectedFields.sortItems()
-        print final_list[u]
-                        #self.settingsDialog.tabSelectedFields.setItem(u,0,final_list[u]///final_list.__getitem__(u))
-                        #erreur : impossible de mettre un QListWidgetItem, il faut un QTableWidgetItem..."""
-            #pyqtRemoveInputHook()
-            #pdb.set_trace()      
+                        layerName=lstFields[i].name()
+                        sdate=date[u]
+                        self.addRowToOptionsTable(layerName,sdate)
+
+    def addRowToOptionsTable(self,layerName,sdate):
+        #insert selected fields in tabSelectedFields
+        
+        # insert row
+        row=self.settingsDialog.tabSelectedFields.rowCount()
+        self.settingsDialog.tabSelectedFields.insertRow(row)
+        
+        # insert values
+        layerItem = QTableWidgetItem()
+        layerItem.setText(layerName)
+        self.settingsDialog.tabSelectedFields.setItem(row,0,layerItem)
+
+        dateItem = QTableWidgetItem()
+        dateItem.setText(sdate)
+        self.settingsDialog.tabSelectedFields.setItem(row,1,dateItem)
               
     def ApplyClicked(self):
         layName = unicode( self.settingsDialog.cmbLayers.currentText() )
@@ -133,10 +141,9 @@ class ChangementViewer:
         if len(lstLayers) == 0:
             QtGui.QMessageBox.warning(None,'Error','There are no unmanaged vector layers in the project !')
             pass
-        # for tracking layers change
-        QObject.connect( self.settingsDialog.cmbLayers, SIGNAL( "currentIndexChanged(QString)" ), self.updateFields )
-        # for tracking fields selection
-        QObject.connect( self.settingsDialog.ltbFields, SIGNAL( 'itemSelectionChanged()' ), self.updateSelectedFields )        
-        # load layer properties dialog        
-        QObject.connect(self.settingsDialog.btnCancel, SIGNAL('clicked()'),self.settingsDialog.close)
-        QObject.connect(self.settingsDialog.btnApply, SIGNAL('clicked()'),self.ApplyClicked)
+
+        #connect
+        QObject.connect( self.settingsDialog.cmbLayers, SIGNAL( "currentIndexChanged(QString)" ), self.updateFields ) #for tracking layers change      
+        QObject.connect( self.settingsDialog.ltbFields, SIGNAL( 'itemSelectionChanged()' ), self.updateSelectedFields ) # for tracking fields selection              
+        QObject.connect(self.settingsDialog.btnCancel, SIGNAL('clicked()'),self.settingsDialog.close) # close the settings dialog
+        QObject.connect(self.settingsDialog.btnApply, SIGNAL('clicked()'),self.ApplyClicked) # load the layer properties dialog

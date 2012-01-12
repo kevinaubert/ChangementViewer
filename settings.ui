@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>979</width>
-    <height>300</height>
+    <width>697</width>
+    <height>280</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -39,8 +39,8 @@
   <widget class="QPushButton" name="btnApply">
    <property name="geometry">
     <rect>
-     <x>290</x>
-     <y>250</y>
+     <x>570</x>
+     <y>240</y>
      <width>97</width>
      <height>27</height>
     </rect>
@@ -52,8 +52,8 @@
   <widget class="QPushButton" name="btnCancel">
    <property name="geometry">
     <rect>
-     <x>180</x>
-     <y>250</y>
+     <x>460</x>
+     <y>240</y>
      <width>97</width>
      <height>27</height>
     </rect>
@@ -62,7 +62,7 @@
     <string>Cancel</string>
    </property>
   </widget>
-  <widget class="QListWidget" name="ltbSelectedFields">
+  <widget class="QTableWidget" name="tabSelectedFields">
    <property name="geometry">
     <rect>
      <x>410</x>
@@ -71,25 +71,15 @@
      <height>192</height>
     </rect>
    </property>
-  </widget>
-  <widget class="QTableWidget" name="tabSelectedFields">
-   <property name="geometry">
-    <rect>
-     <x>690</x>
-     <y>30</y>
-     <width>256</width>
-     <height>192</height>
-    </rect>
-   </property>
    <property name="acceptDrops">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="sortingEnabled">
     <bool>true</bool>
    </property>
    <column>
     <property name="text">
-     <string>Couche</string>
+     <string>Layer</string>
     </property>
    </column>
    <column>
