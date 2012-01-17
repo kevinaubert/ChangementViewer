@@ -142,29 +142,54 @@ class ChangementViewer:
         #const QString displayField() const;
         # Set the numeric field and the number of classes to be generated
         fieldName = layerName
-        numberOfClasses = 5
+        numberOfClasses =5
         # Get the field index based on the field name
-        fieldIndex = vLayer.fieldNameIndex(fieldName)        
-        # Create the renderer object to be associated to the layer later
-        renderer = QgsGraduatedSymbolRenderer( vLayer.geometryType() )        
-        # Here you may choose the renderer mode from EqualInterval/Quantile/Empty
-        renderer.setMode( QgsGraduatedSymbolRenderer.EqualInterval )        
-        # Define classes (lower and upper value as well as a label for each class)
-        provider = vLayer.dataProvider()
-        minimum = provider.minimumValue( fieldIndex ).toDouble()[ 0 ]
-        maximum = provider.maximumValue( fieldIndex ).toDouble()[ 0 ]        
-        for i in range( numberOfClasses ):
-            # Switch if attribute is int or double
-            lower = ('%.*f' % (2, minimum + ( maximum - minimum ) / numberOfClasses * i ) )
-            upper = ('%.*f' % (2, minimum + ( maximum - minimum ) / numberOfClasses * ( i + 1 ) ) )
-            label = "%s - %s" % (lower, upper)
-            color = QColor(255*i/numberOfClasses, 0, 255-255*i/numberOfClasses)
-            sym = QgsSymbol( vLayer.geometryType(), lower, upper, label, color )
-            renderer.addSymbol( sym )       
-        # Set the field index to classify and set the created renderer object to the layer
-        renderer.setClassificationField( fieldIndex )        
-        vLayer.setRenderer( renderer )
-        #self.iface.showLayerProperties(vLayer)
+        fieldIndex = vLayer.fieldNameIndex(fieldName)
+        if vLayer.isUsingRendererV2():
+            # new symbology - subclass of QgsFeatureRendererV2 class
+            # Create the renderer object to be associated to the layer later
+            rendererV2 = QgsGraduatedSymbolRendererV2(fieldName)
+            # Here you may choose the renderer mode from EqualInterval/Quantile/Empty
+            rendererV2.setMode( QgsGraduatedSymbolRendererV2.EqualInterval )
+            # Define classes (lower and upper value as well as a label for each class)
+            provider = vLayer.dataProvider()
+            minimum = provider.minimumValue( fieldIndex ).toDouble()[ 0 ]
+            maximum = provider.maximumValue( fieldIndex ).toDouble()[ 0 ]        
+            for i in range( numberOfClasses ):
+                # Switch if attribute is int or double
+                lower = ('%.*f' % (2, minimum + ( maximum - minimum ) / numberOfClasses * i ) )
+                upper = ('%.*f' % (2, minimum + ( maximum - minimum ) / numberOfClasses * ( i + 1 ) ) )
+                label = "%s - %s" % (lower, upper)
+                color = QColor(255*i/numberOfClasses, 255-255*i/numberOfClasses, 0)
+                sym = QgsSymbol( vLayer.geometryType(), lower, upper, label, color )
+                rendererV2.addCLass( sym )       
+            # Set the field index to classify and set the created renderer object to the layer
+            rendererV2.setClassificationField( fieldIndex )        
+            vLayer.setRenderer( rendererV2 )
+
+        else:
+            # old symbology - subclass of QgsRenderer class)        
+            # Create the renderer object to be associated to the layer later
+            renderer = QgsGraduatedSymbolRenderer( vLayer.geometryType() )        
+            # Here you may choose the renderer mode from EqualInterval/Quantile/Empty
+            renderer.setMode( QgsGraduatedSymbolRenderer.EqualInterval )        
+            # Define classes (lower and upper value as well as a label for each class)
+            provider = vLayer.dataProvider()
+            minimum = provider.minimumValue( fieldIndex ).toDouble()[ 0 ]
+            maximum = provider.maximumValue( fieldIndex ).toDouble()[ 0 ]        
+            for i in range( numberOfClasses ):
+                # Switch if attribute is int or double
+                lower = ('%.*f' % (2, minimum + ( maximum - minimum ) / numberOfClasses * i ) )
+                upper = ('%.*f' % (2, minimum + ( maximum - minimum ) / numberOfClasses * ( i + 1 ) ) )
+                label = "%s - %s" % (lower, upper)
+                color = QColor(255*i/numberOfClasses, 255-255*i/numberOfClasses, 0)
+                sym = QgsSymbol( vLayer.geometryType(), lower, upper, label, color )
+                renderer.addSymbol( sym )       
+            # Set the field index to classify and set the created renderer object to the layer
+            renderer.setClassificationField( fieldIndex )        
+            vLayer.setRenderer( renderer )
+            #self.iface.showLayerProperties(vLayer)
+
         
     def showSettingsDialog(self):
         # load the form
