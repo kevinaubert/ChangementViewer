@@ -60,6 +60,7 @@ class ChangementViewer:
         # Remove the plugin menu item and icon
         self.iface.removePluginMenu("&Changement Viewer",self.action)
         self.iface.removeToolBarIcon(self.action)
+        self.iface.removeDockWidget(self.dock)
 
     # run method that performs all the real work
     
@@ -148,9 +149,10 @@ class ChangementViewer:
         if vLayer.isUsingRendererV2():
             # new symbology - subclass of QgsFeatureRendererV2 class
             # Create the renderer object to be associated to the layer later
-            rendererV2 = QgsGraduatedSymbolRendererV2(fieldName)
+            #rendererV2 = QgsGraduatedSymbolRendererV2(fieldName)
             # Here you may choose the renderer mode from EqualInterval/Quantile/Empty
-            rendererV2.setMode( QgsGraduatedSymbolRendererV2.EqualInterval )
+
+            #QgsVectorColorRampV2 *ramp
             # Define classes (lower and upper value as well as a label for each class)
             provider = vLayer.dataProvider()
             minimum = provider.minimumValue( fieldIndex ).toDouble()[ 0 ]
@@ -160,15 +162,17 @@ class ChangementViewer:
                 lower = ('%.*f' % (2, minimum + ( maximum - minimum ) / numberOfClasses * i ) )
                 upper = ('%.*f' % (2, minimum + ( maximum - minimum ) / numberOfClasses * ( i + 1 ) ) )
                 label = "%s - %s" % (lower, upper)
-                color = QColor(255*i/numberOfClasses, 255-255*i/numberOfClasses, 0)
-                sym = QgsSymbol( vLayer.geometryType(), lower, upper, label, color )
-                rendererV2.addCLass( sym )       
+                color = QColor(255*i/numberOfClasses, 255-255*i/numberOfClasses, 0)      
             # Set the field index to classify and set the created renderer object to the layer
-            rendererV2.setClassificationField( fieldIndex )        
-            vLayer.setRenderer( rendererV2 )
+            mode = QgsGraduatedSymbolRendererV2.Mode()
+            sym = QgsSymbolV2.defaultSymbol(vLayer.geometryType())
+            ramp=QgsVectorGradientColorRampV2(QColor(0,0,255),QColor(0,255,0))
+            rendererV2 = QgsGraduatedSymbolRendererV2.createRenderer ( vLayer, fieldName, numberOfClasses, mode, sym, ramp )
+            rendererV2.setRotationField(layerName)        
+            vLayer.setRendererV2( rendererV2 )
 
         else:
-            # old symbology - subclass of QgsRenderer class)        
+            # old symbology - subclass of QgsRenderer class        
             # Create the renderer object to be associated to the layer later
             renderer = QgsGraduatedSymbolRenderer( vLayer.geometryType() )        
             # Here you may choose the renderer mode from EqualInterval/Quantile/Empty
