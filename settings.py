@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'settings.ui'
 #
-# Created: Thu Jan 12 11:36:51 2012
+# Created: Wed Jan 18 12:13:37 2012
 #      by: PyQt4 UI code generator 4.8.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -27,12 +27,17 @@ class Ui_settings(object):
         self.cmbLayers.setGeometry(QtCore.QRect(20, 30, 85, 27))
         self.cmbLayers.setObjectName(_fromUtf8("cmbLayers"))
         self.btnApply = QtGui.QPushButton(settings)
-        self.btnApply.setGeometry(QtCore.QRect(570, 240, 97, 27))
+        self.btnApply.setGeometry(QtCore.QRect(350, 240, 97, 27))
         self.btnApply.setText(QtGui.QApplication.translate("settings", "Apply", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnApply.setAutoDefault(True)
+        self.btnApply.setDefault(False)
         self.btnApply.setObjectName(_fromUtf8("btnApply"))
         self.btnCancel = QtGui.QPushButton(settings)
         self.btnCancel.setGeometry(QtCore.QRect(460, 240, 97, 27))
         self.btnCancel.setText(QtGui.QApplication.translate("settings", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnCancel.setAutoDefault(False)
+        self.btnCancel.setDefault(True)
+        self.btnCancel.setFlat(False)
         self.btnCancel.setObjectName(_fromUtf8("btnCancel"))
         self.tabSelectedFields = QtGui.QTableWidget(settings)
         self.tabSelectedFields.setGeometry(QtCore.QRect(410, 30, 256, 192))
@@ -46,6 +51,16 @@ class Ui_settings(object):
         item = QtGui.QTableWidgetItem()
         item.setText(QtGui.QApplication.translate("settings", "Date", None, QtGui.QApplication.UnicodeUTF8))
         self.tabSelectedFields.setHorizontalHeaderItem(1, item)
+        self.snbClasses = QtGui.QSpinBox(settings)
+        self.snbClasses.setGeometry(QtCore.QRect(40, 80, 59, 27))
+        self.snbClasses.setObjectName(_fromUtf8("snbClasses"))
+        self.cmbMode = QtGui.QComboBox(settings)
+        self.cmbMode.setGeometry(QtCore.QRect(20, 130, 85, 27))
+        self.cmbMode.setObjectName(_fromUtf8("cmbMode"))
+        self.btnOk = QtGui.QPushButton(settings)
+        self.btnOk.setGeometry(QtCore.QRect(570, 240, 97, 27))
+        self.btnOk.setText(QtGui.QApplication.translate("settings", "OK", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnOk.setObjectName(_fromUtf8("btnOk"))
 
         self.retranslateUi(settings)
         QtCore.QMetaObject.connectSlotsByName(settings)

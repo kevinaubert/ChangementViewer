@@ -39,7 +39,7 @@
   <widget class="QPushButton" name="btnApply">
    <property name="geometry">
     <rect>
-     <x>570</x>
+     <x>350</x>
      <y>240</y>
      <width>97</width>
      <height>27</height>
@@ -47,6 +47,12 @@
    </property>
    <property name="text">
     <string>Apply</string>
+   </property>
+   <property name="autoDefault">
+    <bool>true</bool>
+   </property>
+   <property name="default">
+    <bool>false</bool>
    </property>
   </widget>
   <widget class="QPushButton" name="btnCancel">
@@ -60,6 +66,15 @@
    </property>
    <property name="text">
     <string>Cancel</string>
+   </property>
+   <property name="autoDefault">
+    <bool>false</bool>
+   </property>
+   <property name="default">
+    <bool>true</bool>
+   </property>
+   <property name="flat">
+    <bool>false</bool>
    </property>
   </widget>
   <widget class="QTableWidget" name="tabSelectedFields">
@@ -87,6 +102,39 @@
      <string>Date</string>
     </property>
    </column>
+  </widget>
+  <widget class="QSpinBox" name="snbClasses">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>80</y>
+     <width>59</width>
+     <height>27</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="cmbMode">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>130</y>
+     <width>85</width>
+     <height>27</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnOk">
+   <property name="geometry">
+    <rect>
+     <x>570</x>
+     <y>240</y>
+     <width>97</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>OK</string>
+   </property>
   </widget>
  </widget>
  <resources/>

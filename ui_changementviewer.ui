@@ -116,7 +116,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QSlider" name="horizontalTimeSlider">
+      <widget class="QSlider" name="timeSlide">
        <property name="minimumSize">
         <size>
          <width>0</width>
@@ -129,8 +129,20 @@
          <height>20</height>
         </size>
        </property>
+       <property name="acceptDrops">
+        <bool>false</bool>
+       </property>
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="invertedAppearance">
+        <bool>false</bool>
+       </property>
+       <property name="invertedControls">
+        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -216,6 +228,12 @@
        <property name="text">
         <string>Settings</string>
        </property>
+       <property name="autoDefault">
+        <bool>true</bool>
+       </property>
+       <property name="default">
+        <bool>false</bool>
+       </property>
       </widget>
      </item>
      <item>
@@ -232,12 +250,18 @@
       </spacer>
      </item>
      <item>
-      <widget class="QLabel" name="label">
+      <widget class="QLabel" name="labelDate">
        <property name="text">
-        <string>Compteur</string>
+        <string>Date</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::AutoText</enum>
        </property>
        <property name="scaledContents">
         <bool>false</bool>
+       </property>
+       <property name="textInteractionFlags">
+        <set>Qt::TextEditable</set>
        </property>
       </widget>
      </item>

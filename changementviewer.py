@@ -22,6 +22,7 @@
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from qgis.core import *
+from qgis.gui import *
 from PyQt4 import uic	
 from PyQt4 import QtGui
 import os, sys,re
@@ -55,6 +56,7 @@ class ChangementViewer:
         self.dock = uic.loadUi( os.path.join( path, "ui_changementviewer.ui" ) )
         self.iface.addDockWidget( Qt.BottomDockWidgetArea, self.dock )
         QObject.connect(self.dock.btnSettings, SIGNAL('clicked()'),self.showSettingsDialog)
+        QObject.connect(self.dock.timeSlide,SIGNAL('valueChanged(int)'),self.currentTimeChanged)
 
     def unload(self):
         # Remove the plugin menu item and icon
@@ -75,10 +77,53 @@ class ChangementViewer:
             # substitute with your code
         #    pass
     
+    def currentTimeChanged(self,datetime):
+        #faire changer l'affichage de l'attribut actuel et passer au suivant dans la liste
+        row=self.settingsDialog.tabSelectedFields.rowCount()
+        #self.settingsDialog.tabSelectedFields.sortItems(1, Qt.SortOrder order = Qt.AscendingOrder)
+        for u in range(row):
+            currentDate=self.settingsDialog.tabSelectedFields.takeItem(u,1)
+        self.dock.labelDate.setText(currentDate.text())
+        self.dock.timeSlide.setMinimum(0) 
+        self.dock.timeSlide.setMaximum(99) 
+
+    """def refreshTimeRestrictions(self,currentTimePosition,sender=None):
+        #update current time showing in dateTimeEditCurrentTime and horizontalTimeSlider
+        #QMessageBox.information(self.iface.mainWindow(),'Test Output','Refresh!\n'+str(sender)+'\n'+str(currentTimePosition))
+        try:
+            self.dock.dateTimeEditCurrentTime.setDateTime(currentTimePosition)
+            self.dock.horizontalTimeSlider.setValue(mktime(currentTimePosition.timetuple())) 
+        except:
+            pass"""
+        
+    def showSettingsDialog(self):
+        # load the form
+        path = os.path.dirname( os.path.abspath( __file__ ) )
+        self.settingsDialog = uic.loadUi(os.path.join(path,"settings.ui"))
+        self.settingsDialog.show()
+                
+        # fill layers combobox
+        self.settingsDialog.cmbLayers.clear()
+        self.settingsDialog.cmbLayers.addItem( "Layers" )
+        lstLayers = gettings.getLayersNames( "vector" )
+        self.settingsDialog.cmbLayers.addItems( lstLayers )
+        if len(lstLayers) == 0:
+            QtGui.QMessageBox.warning(None,'Error','There are no unmanaged vector layers in the project !')
+            pass
+
+        #connect
+        QObject.connect( self.settingsDialog.cmbLayers, SIGNAL( "currentIndexChanged(QString)" ), self.updateFields ) #for tracking layers change      
+        QObject.connect( self.settingsDialog.ltbFields, SIGNAL( 'itemSelectionChanged()' ), self.updateSelectedFields ) # for tracking fields selection              
+        QObject.connect(self.settingsDialog.btnCancel, SIGNAL('clicked()'),self.settingsDialog.close) # close the settings dialog
+        QObject.connect(self.settingsDialog.btnOk, SIGNAL('clicked()'),self.settingsDialog.close) # close the settings dialog
+        QObject.connect(self.settingsDialog.btnOk, SIGNAL('clicked()'),self.ApplyClicked) # load the layer properties dialog
+        QObject.connect(self.settingsDialog.btnApply, SIGNAL('clicked()'),self.ApplyClicked) # load the layer properties dialog
+        
     def updateFields( self ):
         layName = unicode( self.settingsDialog.cmbLayers.currentText() )
         self.settingsDialog.ltbFields.clear()
         if layName != "Layers":
+            self.showModelist()
             vLayer = gettings.getVectorLayerByName( layName )
             lstFields = vLayer.dataProvider().fields()
             for i in lstFields:
@@ -119,6 +164,21 @@ class ChangementViewer:
         dateItem = QTableWidgetItem()
         dateItem.setText(sdate)
         self.settingsDialog.tabSelectedFields.setItem(row,1,dateItem)
+        
+    def showModelist(self):
+        layName = unicode( self.settingsDialog.cmbLayers.currentText() )
+        vLayer=gettings.getVectorLayerByName(layName)
+        self.settingsDialog.cmbMode.clear()
+        self.settingsDialog.cmbMode.addItem( "Mode" )
+        if vLayer.isUsingRendererV2():
+            # new symbology - subclass of QgsFeatureRendererV2 class
+            lstModes = ["EqualInterval", "Quantile", "Jenks", "StdDev" ,"Pretty"]
+
+        else:
+            # old symbology - subclass of QgsRenderer class
+            lstModes = ["EqualInterval", "Quantile", "Empty"] 
+        #fill the mode combobox    
+        self.settingsDialog.cmbMode.addItems( lstModes )
               
     def ApplyClicked(self):
         layName = unicode( self.settingsDialog.cmbLayers.currentText() )
@@ -126,93 +186,53 @@ class ChangementViewer:
             vLayer = gettings.getVectorLayerByName( layName )
         else:
             vLayer=self.iface.mapCanvas().currentLayer()
-
         lstFields = vLayer.dataProvider().fields()
         myfields = self.settingsDialog.ltbFields     
         for i in range(len(myfields)):  
             if myfields.item(i).isSelected() == True:
                 date=re.findall(r'\d+',lstFields[i].name())
                 for u in range(len(date)):
-                    layerName=lstFields[i].name()
+                    fieldName=lstFields[i].name()
                     #sdate=date[u]
                     #vLayer.setDisplayField(layerName)
-
-        # Set the primary display field to be used in the identify results dialog
-        #setDisplayField(QString fldName=0);
-        # Returns the primary display field name used in the identify results dialog */
-        #const QString displayField() const;
         # Set the numeric field and the number of classes to be generated
-        fieldName = layerName
-        numberOfClasses =5
+        numberOfClasses =self.settingsDialog.snbClasses.value()
         # Get the field index based on the field name
         fieldIndex = vLayer.fieldNameIndex(fieldName)
-        if vLayer.isUsingRendererV2():
-            # new symbology - subclass of QgsFeatureRendererV2 class
-            # Create the renderer object to be associated to the layer later
-            #rendererV2 = QgsGraduatedSymbolRendererV2(fieldName)
-            # Here you may choose the renderer mode from EqualInterval/Quantile/Empty
-
-            #QgsVectorColorRampV2 *ramp
-            # Define classes (lower and upper value as well as a label for each class)
-            provider = vLayer.dataProvider()
-            minimum = provider.minimumValue( fieldIndex ).toDouble()[ 0 ]
-            maximum = provider.maximumValue( fieldIndex ).toDouble()[ 0 ]        
-            for i in range( numberOfClasses ):
-                # Switch if attribute is int or double
-                lower = ('%.*f' % (2, minimum + ( maximum - minimum ) / numberOfClasses * i ) )
-                upper = ('%.*f' % (2, minimum + ( maximum - minimum ) / numberOfClasses * ( i + 1 ) ) )
-                label = "%s - %s" % (lower, upper)
-                color = QColor(255*i/numberOfClasses, 255-255*i/numberOfClasses, 0)      
-            # Set the field index to classify and set the created renderer object to the layer
-            mode = QgsGraduatedSymbolRendererV2.Mode()
-            sym = QgsSymbolV2.defaultSymbol(vLayer.geometryType())
-            ramp=QgsVectorGradientColorRampV2(QColor(0,0,255),QColor(0,255,0))
-            rendererV2 = QgsGraduatedSymbolRendererV2.createRenderer ( vLayer, fieldName, numberOfClasses, mode, sym, ramp )
-            rendererV2.setRotationField(layerName)        
-            vLayer.setRendererV2( rendererV2 )
-
+        vLayer = gettings.getVectorLayerByName( layName )
+        modeName = unicode( self.settingsDialog.cmbMode.currentText() )
+        if modeName != "Mode":
+            mode=(self.settingsDialog.cmbMode.currentIndex()-1)
+            if self.iface.mapCanvas().currentLayer().isUsingRendererV2():
+                # new symbology - subclass of QgsFeatureRendererV2 class
+                sym = QgsSymbolV2.defaultSymbol(vLayer.geometryType())
+                ramp=QgsVectorGradientColorRampV2(QColor(0,255,0),QColor(255,0,0))
+                rendererV2 = QgsGraduatedSymbolRendererV2.createRenderer ( vLayer, fieldName, numberOfClasses, mode, sym, ramp )
+                rendererV2.setRotationField(fieldName)        
+                vLayer.setRendererV2( rendererV2 )
+    
+            else:
+                # old symbology - subclass of QgsRenderer class
+                # Create the renderer object to be associated to the layer later
+                renderer = QgsGraduatedSymbolRenderer( vLayer.geometryType() )        
+                # Here you may choose the renderer mode from EqualInterval/Quantile/Empty
+                renderer.setMode( mode )     
+                # Define classes (lower and upper value as well as a label for each class)
+                provider = vLayer.dataProvider()
+                minimum = provider.minimumValue( fieldIndex ).toDouble()[ 0 ]
+                maximum = provider.maximumValue( fieldIndex ).toDouble()[ 0 ]        
+                for i in range( numberOfClasses ):
+                    # Switch if attribute is int or double
+                    lower = ('%.*f' % (2, minimum + ( maximum - minimum ) / numberOfClasses * i ) )
+                    upper = ('%.*f' % (2, minimum + ( maximum - minimum ) / numberOfClasses * ( i + 1 ) ) )
+                    label = "%s - %s" % (lower, upper)
+                    color = QColor(255*i/numberOfClasses, 255-255*i/numberOfClasses, 0)
+                    sym = QgsSymbol( vLayer.geometryType(), lower, upper, label, color )
+                    renderer.addSymbol( sym )       
+                # Set the field index to classify and set the created renderer object to the layer
+                renderer.setClassificationField( fieldIndex )        
+                vLayer.setRenderer( renderer )
+                #self.iface.showLayerProperties(vLayer)
+            self.iface.mapCanvas().refresh()
         else:
-            # old symbology - subclass of QgsRenderer class        
-            # Create the renderer object to be associated to the layer later
-            renderer = QgsGraduatedSymbolRenderer( vLayer.geometryType() )        
-            # Here you may choose the renderer mode from EqualInterval/Quantile/Empty
-            renderer.setMode( QgsGraduatedSymbolRenderer.EqualInterval )        
-            # Define classes (lower and upper value as well as a label for each class)
-            provider = vLayer.dataProvider()
-            minimum = provider.minimumValue( fieldIndex ).toDouble()[ 0 ]
-            maximum = provider.maximumValue( fieldIndex ).toDouble()[ 0 ]        
-            for i in range( numberOfClasses ):
-                # Switch if attribute is int or double
-                lower = ('%.*f' % (2, minimum + ( maximum - minimum ) / numberOfClasses * i ) )
-                upper = ('%.*f' % (2, minimum + ( maximum - minimum ) / numberOfClasses * ( i + 1 ) ) )
-                label = "%s - %s" % (lower, upper)
-                color = QColor(255*i/numberOfClasses, 255-255*i/numberOfClasses, 0)
-                sym = QgsSymbol( vLayer.geometryType(), lower, upper, label, color )
-                renderer.addSymbol( sym )       
-            # Set the field index to classify and set the created renderer object to the layer
-            renderer.setClassificationField( fieldIndex )        
-            vLayer.setRenderer( renderer )
-            #self.iface.showLayerProperties(vLayer)
-
-        
-    def showSettingsDialog(self):
-        # load the form
-        path = os.path.dirname( os.path.abspath( __file__ ) )
-        self.settingsDialog = uic.loadUi(os.path.join(path,"settings.ui"))
-        self.settingsDialog.show()
-                
-        # fill layers combobox
-        self.settingsDialog.cmbLayers.clear()
-        self.settingsDialog.cmbLayers.addItem( "Layers" )
-        lstLayers = gettings.getLayersNames( "vector" )
-        self.settingsDialog.cmbLayers.addItems( lstLayers )
-        if len(lstLayers) == 0:
-            QtGui.QMessageBox.warning(None,'Error','There are no unmanaged vector layers in the project !')
-            pass
-
-        #connect
-        QObject.connect( self.settingsDialog.cmbLayers, SIGNAL( "currentIndexChanged(QString)" ), self.updateFields ) #for tracking layers change      
-        QObject.connect( self.settingsDialog.ltbFields, SIGNAL( 'itemSelectionChanged()' ), self.updateSelectedFields ) # for tracking fields selection              
-        QObject.connect(self.settingsDialog.btnCancel, SIGNAL('clicked()'),self.settingsDialog.close)
-        QObject.connect(self.settingsDialog.btnApply, SIGNAL('clicked()'),self.settingsDialog.close) # close the settings dialog
-        QObject.connect(self.settingsDialog.btnApply, SIGNAL('clicked()'),self.ApplyClicked) # load the layer properties dialog
+            QtGui.QMessageBox.warning(None,'Error','You have to choose a discretization mode')
