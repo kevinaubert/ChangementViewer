@@ -64,37 +64,19 @@ class ChangementViewer:
         self.iface.removeToolBarIcon(self.action)
         self.iface.removeDockWidget(self.dock)
 
-    # run method that performs all the real work
-    
     def run(self):
         self.dock = True
-        # create and show the dialog
-        #ChangementViewerDialog.
-        #result = dlg.exec_()
-        # See if OK was pressed
-        #if result == 1:
-            # do something useful (delete the line containing pass and
-            # substitute with your code
-        #    pass
     
-    def currentTimeChanged(self,datetime):
+    def currentTimeChanged(self):
         #faire changer l'affichage de l'attribut actuel et passer au suivant dans la liste
-        row=self.settingsDialog.tabSelectedFields.rowCount()
-        #self.settingsDialog.tabSelectedFields.sortItems(1, Qt.SortOrder order = Qt.AscendingOrder)
+        if self.settingsDialog.tabSelectedFields.rowCount() != 0:
+            row=self.settingsDialog.tabSelectedFields.rowCount()
+        else:
+            row=0
         for u in range(row):
-            currentDate=self.settingsDialog.tabSelectedFields.takeItem(u,1)
-        self.dock.labelDate.setText(currentDate.text())
-        self.dock.timeSlide.setMinimum(0) 
-        self.dock.timeSlide.setMaximum(99) 
-
-    """def refreshTimeRestrictions(self,currentTimePosition,sender=None):
-        #update current time showing in dateTimeEditCurrentTime and horizontalTimeSlider
-        #QMessageBox.information(self.iface.mainWindow(),'Test Output','Refresh!\n'+str(sender)+'\n'+str(currentTimePosition))
-        try:
-            self.dock.dateTimeEditCurrentTime.setDateTime(currentTimePosition)
-            self.dock.horizontalTimeSlider.setValue(mktime(currentTimePosition.timetuple())) 
-        except:
-            pass"""
+            currentDate=self.settingsDialog.tabSelectedFields.item(u,1)
+            self.dock.labelDate.setText(currentDate.text())
+        self.ApplyClicked()
         
     def showSettingsDialog(self):
         # load the form
@@ -148,7 +130,8 @@ class ChangementViewer:
                         layerName=lstFields[i].name()
                         sdate=date[u]
                         self.addRowToOptionsTable(layerName,sdate)
-
+        self.settingsDialog.tabSelectedFields.sortItems(1,order = Qt.AscendingOrder)
+        
     def addRowToOptionsTable(self,layerName,sdate):
         #insert selected fields in tabSelectedFields
         

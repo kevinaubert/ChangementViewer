@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'settings.ui'
 #
-# Created: Wed Jan 18 12:13:37 2012
+# Created: Wed Jan 18 14:54:45 2012
 #      by: PyQt4 UI code generator 4.8.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -51,6 +51,8 @@ class Ui_settings(object):
         item = QtGui.QTableWidgetItem()
         item.setText(QtGui.QApplication.translate("settings", "Date", None, QtGui.QApplication.UnicodeUTF8))
         self.tabSelectedFields.setHorizontalHeaderItem(1, item)
+        self.tabSelectedFields.horizontalHeader().setDefaultSectionSize(128)
+        self.tabSelectedFields.horizontalHeader().setStretchLastSection(True)
         self.snbClasses = QtGui.QSpinBox(settings)
         self.snbClasses.setGeometry(QtCore.QRect(40, 80, 59, 27))
         self.snbClasses.setObjectName(_fromUtf8("snbClasses"))

@@ -135,6 +135,9 @@
        <property name="autoFillBackground">
         <bool>false</bool>
        </property>
+       <property name="inputMethodHints">
+        <set>Qt::ImhPreferLowercase|Qt::ImhPreferUppercase</set>
+       </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -143,6 +146,9 @@
        </property>
        <property name="invertedControls">
         <bool>false</bool>
+       </property>
+       <property name="tickPosition">
+        <enum>QSlider::TicksBothSides</enum>
        </property>
       </widget>
      </item>

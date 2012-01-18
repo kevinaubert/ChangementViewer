@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_changementviewer.ui'
 #
-# Created: Mon Jan  9 14:54:21 2012
+# Created: Wed Jan 18 15:13:31 2012
 #      by: PyQt4 UI code generator 4.8.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -68,12 +68,18 @@ class Ui_ChangementViewer(object):
         self.pushButtonBack.setFlat(True)
         self.pushButtonBack.setObjectName(_fromUtf8("pushButtonBack"))
         self.horizontalLayout.addWidget(self.pushButtonBack)
-        self.horizontalTimeSlider = QtGui.QSlider(self.layoutWidget)
-        self.horizontalTimeSlider.setMinimumSize(QtCore.QSize(0, 12))
-        self.horizontalTimeSlider.setMaximumSize(QtCore.QSize(16777215, 20))
-        self.horizontalTimeSlider.setOrientation(QtCore.Qt.Horizontal)
-        self.horizontalTimeSlider.setObjectName(_fromUtf8("horizontalTimeSlider"))
-        self.horizontalLayout.addWidget(self.horizontalTimeSlider)
+        self.timeSlide = QtGui.QSlider(self.layoutWidget)
+        self.timeSlide.setMinimumSize(QtCore.QSize(0, 12))
+        self.timeSlide.setMaximumSize(QtCore.QSize(16777215, 20))
+        self.timeSlide.setAcceptDrops(False)
+        self.timeSlide.setAutoFillBackground(False)
+        self.timeSlide.setInputMethodHints(QtCore.Qt.ImhPreferLowercase|QtCore.Qt.ImhPreferUppercase)
+        self.timeSlide.setOrientation(QtCore.Qt.Horizontal)
+        self.timeSlide.setInvertedAppearance(False)
+        self.timeSlide.setInvertedControls(False)
+        self.timeSlide.setTickPosition(QtGui.QSlider.TicksBothSides)
+        self.timeSlide.setObjectName(_fromUtf8("timeSlide"))
+        self.horizontalLayout.addWidget(self.timeSlide)
         self.pushButtonForward = QtGui.QPushButton(self.layoutWidget)
         self.pushButtonForward.setMaximumSize(QtCore.QSize(12, 12))
         self.pushButtonForward.setText(_fromUtf8(""))
@@ -110,15 +116,19 @@ class Ui_ChangementViewer(object):
         self.horizontalLayout_2.addWidget(self.pushButtonToggleTime)
         self.btnSettings = QtGui.QPushButton(self.layoutWidget1)
         self.btnSettings.setText(QtGui.QApplication.translate("ChangementViewer", "Settings", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnSettings.setAutoDefault(True)
+        self.btnSettings.setDefault(False)
         self.btnSettings.setObjectName(_fromUtf8("btnSettings"))
         self.horizontalLayout_2.addWidget(self.btnSettings)
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem)
-        self.label = QtGui.QLabel(self.layoutWidget1)
-        self.label.setText(QtGui.QApplication.translate("ChangementViewer", "Compteur", None, QtGui.QApplication.UnicodeUTF8))
-        self.label.setScaledContents(False)
-        self.label.setObjectName(_fromUtf8("label"))
-        self.horizontalLayout_2.addWidget(self.label)
+        self.labelDate = QtGui.QLabel(self.layoutWidget1)
+        self.labelDate.setText(QtGui.QApplication.translate("ChangementViewer", "Date", None, QtGui.QApplication.UnicodeUTF8))
+        self.labelDate.setTextFormat(QtCore.Qt.AutoText)
+        self.labelDate.setScaledContents(False)
+        self.labelDate.setTextInteractionFlags(QtCore.Qt.TextEditable)
+        self.labelDate.setObjectName(_fromUtf8("labelDate"))
+        self.horizontalLayout_2.addWidget(self.labelDate)
         spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem1)
         self.pushButtonExportVideo = QtGui.QPushButton(self.layoutWidget1)
