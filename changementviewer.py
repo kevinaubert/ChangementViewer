@@ -1,3 +1,4 @@
+# -*- coding: latin1 -*-
 """
 /***************************************************************************
  ChangementViewer
@@ -162,7 +163,7 @@ class ChangementViewer:
         self.settingsDialog.cmbMode.addItems( lstModes )
         
         
-        """faire un selectedFieldBefore et un selectedFieldAfter pour les dÃ©placements du slider ?"""        
+        #"""faire un selectedFieldBefore et un selectedFieldAfter pour les déplacements du slider ?"""        
     def selectedField(self):
         layName = unicode( self.settingsDialog.cmbLayers.currentText() )
         if layName != "Layers":
