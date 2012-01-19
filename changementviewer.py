@@ -33,6 +33,7 @@ import resources
 # Import the code for the dialog
 from changementviewerdialog import ChangementViewerDialog
 import gettings
+
 class ChangementViewer:
 
     def __init__(self, iface):
@@ -56,7 +57,7 @@ class ChangementViewer:
         self.dock = uic.loadUi( os.path.join( path, "ui_changementviewer.ui" ) )
         self.iface.addDockWidget( Qt.BottomDockWidgetArea, self.dock )
         QObject.connect(self.dock.btnSettings, SIGNAL('clicked()'),self.showSettingsDialog)
-        QObject.connect(self.dock.timeSlide,SIGNAL('valueChanged(int)'),self.currentTimeChanged)
+        QObject.connect(self.dock.timeSlide,SIGNAL('valueChanged(int)'),self.dock.snbDate.setValue)
 
     def unload(self):
         # Remove the plugin menu item and icon
@@ -66,17 +67,6 @@ class ChangementViewer:
 
     def run(self):
         self.dock = True
-    
-    def currentTimeChanged(self):
-        #faire changer l'affichage de l'attribut actuel et passer au suivant dans la liste
-        if self.settingsDialog.tabSelectedFields.rowCount() != 0:
-            row=self.settingsDialog.tabSelectedFields.rowCount()
-        else:
-            row=0
-        for u in range(row):
-            currentDate=self.settingsDialog.tabSelectedFields.item(u,1)
-            self.dock.labelDate.setText(currentDate.text())
-        self.ApplyClicked()
         
     def showSettingsDialog(self):
         # load the form
@@ -98,8 +88,10 @@ class ChangementViewer:
         QObject.connect( self.settingsDialog.ltbFields, SIGNAL( 'itemSelectionChanged()' ), self.updateSelectedFields ) # for tracking fields selection              
         QObject.connect(self.settingsDialog.btnCancel, SIGNAL('clicked()'),self.settingsDialog.close) # close the settings dialog
         QObject.connect(self.settingsDialog.btnOk, SIGNAL('clicked()'),self.settingsDialog.close) # close the settings dialog
-        QObject.connect(self.settingsDialog.btnOk, SIGNAL('clicked()'),self.ApplyClicked) # load the layer properties dialog
-        QObject.connect(self.settingsDialog.btnApply, SIGNAL('clicked()'),self.ApplyClicked) # load the layer properties dialog
+        QObject.connect(self.settingsDialog.btnOk, SIGNAL('clicked()'),self.selectedField) # load the layer properties dialog
+        QObject.connect(self.settingsDialog.btnApply, SIGNAL('clicked()'),self.selectedField) # load the layer properties dialog
+        QObject.connect( self.settingsDialog.tabSelectedFields, SIGNAL( 'itemDoubleClicked()' ), self.updateSelectedFields )
+
         
     def updateFields( self ):
         layName = unicode( self.settingsDialog.cmbLayers.currentText() )
@@ -131,6 +123,12 @@ class ChangementViewer:
                         sdate=date[u]
                         self.addRowToOptionsTable(layerName,sdate)
         self.settingsDialog.tabSelectedFields.sortItems(1,order = Qt.AscendingOrder)
+        a=self.settingsDialog.tabSelectedFields.item(0,1)
+        n=self.settingsDialog.tabSelectedFields.rowCount()
+        b=self.settingsDialog.tabSelectedFields.item(n-1,1)
+        self.dock.timeSlide.setMinimum(int(a.text()))
+        self.dock.timeSlide.setMaximum(int(b.text()))
+
         
     def addRowToOptionsTable(self,layerName,sdate):
         #insert selected fields in tabSelectedFields
@@ -162,27 +160,25 @@ class ChangementViewer:
             lstModes = ["EqualInterval", "Quantile", "Empty"] 
         #fill the mode combobox    
         self.settingsDialog.cmbMode.addItems( lstModes )
-              
-    def ApplyClicked(self):
+        
+        
+        """faire un selectedFieldBefore et un selectedFieldAfter pour les déplacements du slider ?"""        
+    def selectedField(self):
         layName = unicode( self.settingsDialog.cmbLayers.currentText() )
         if layName != "Layers":
             vLayer = gettings.getVectorLayerByName( layName )
         else:
             vLayer=self.iface.mapCanvas().currentLayer()
-        lstFields = vLayer.dataProvider().fields()
-        myfields = self.settingsDialog.ltbFields     
-        for i in range(len(myfields)):  
-            if myfields.item(i).isSelected() == True:
-                date=re.findall(r'\d+',lstFields[i].name())
-                for u in range(len(date)):
-                    fieldName=lstFields[i].name()
-                    #sdate=date[u]
-                    #vLayer.setDisplayField(layerName)
+        firstField=self.settingsDialog.tabSelectedFields.item(0,0)
+        fieldName=firstField.text()
+        self.ApplyClicked(vLayer,fieldName)
+              
+    def ApplyClicked(self,vLayer,fieldName):
         # Set the numeric field and the number of classes to be generated
         numberOfClasses =self.settingsDialog.snbClasses.value()
         # Get the field index based on the field name
         fieldIndex = vLayer.fieldNameIndex(fieldName)
-        vLayer = gettings.getVectorLayerByName( layName )
+        # Set the discretization mode
         modeName = unicode( self.settingsDialog.cmbMode.currentText() )
         if modeName != "Mode":
             mode=(self.settingsDialog.cmbMode.currentIndex()-1)
@@ -193,7 +189,6 @@ class ChangementViewer:
                 rendererV2 = QgsGraduatedSymbolRendererV2.createRenderer ( vLayer, fieldName, numberOfClasses, mode, sym, ramp )
                 rendererV2.setRotationField(fieldName)        
                 vLayer.setRendererV2( rendererV2 )
-    
             else:
                 # old symbology - subclass of QgsRenderer class
                 # Create the renderer object to be associated to the layer later
@@ -217,5 +212,6 @@ class ChangementViewer:
                 vLayer.setRenderer( renderer )
                 #self.iface.showLayerProperties(vLayer)
             self.iface.mapCanvas().refresh()
+            self.iface.legendInterface().refreshLayerSymbology(vLayer)
         else:
             QtGui.QMessageBox.warning(None,'Error','You have to choose a discretization mode')
