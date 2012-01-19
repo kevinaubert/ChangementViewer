@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_changementviewer.ui'
 #
-# Created: Thu Jan 19 10:00:01 2012
+# Created: Thu Jan 19 12:28:54 2012
 #      by: PyQt4 UI code generator 4.8.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -122,23 +122,17 @@ class Ui_ChangementViewer(object):
         self.horizontalLayout_2.addWidget(self.btnSettings)
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem)
+        self.label = QtGui.QLabel(self.layoutWidget1)
+        self.label.setText(QtGui.QApplication.translate("ChangementViewer", "Date :", None, QtGui.QApplication.UnicodeUTF8))
+        self.label.setTextFormat(QtCore.Qt.AutoText)
+        self.label.setScaledContents(False)
+        self.label.setTextInteractionFlags(QtCore.Qt.TextEditable)
+        self.label.setObjectName(_fromUtf8("label"))
+        self.horizontalLayout_2.addWidget(self.label)
         self.labelDate = QtGui.QLabel(self.layoutWidget1)
-        self.labelDate.setText(QtGui.QApplication.translate("ChangementViewer", "Date :", None, QtGui.QApplication.UnicodeUTF8))
-        self.labelDate.setTextFormat(QtCore.Qt.AutoText)
-        self.labelDate.setScaledContents(False)
-        self.labelDate.setTextInteractionFlags(QtCore.Qt.TextEditable)
+        self.labelDate.setText(_fromUtf8(""))
         self.labelDate.setObjectName(_fromUtf8("labelDate"))
         self.horizontalLayout_2.addWidget(self.labelDate)
-        self.snbDate = QtGui.QSpinBox(self.layoutWidget1)
-        self.snbDate.setInputMethodHints(QtCore.Qt.ImhDigitsOnly|QtCore.Qt.ImhPreferNumbers)
-        self.snbDate.setWrapping(False)
-        self.snbDate.setFrame(False)
-        self.snbDate.setAlignment(QtCore.Qt.AlignCenter)
-        self.snbDate.setReadOnly(True)
-        self.snbDate.setButtonSymbols(QtGui.QAbstractSpinBox.NoButtons)
-        self.snbDate.setMaximum(9999)
-        self.snbDate.setObjectName(_fromUtf8("snbDate"))
-        self.horizontalLayout_2.addWidget(self.snbDate)
         spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem1)
         self.pushButtonExportVideo = QtGui.QPushButton(self.layoutWidget1)

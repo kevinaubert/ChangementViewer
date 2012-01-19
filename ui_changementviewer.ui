@@ -256,7 +256,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QLabel" name="labelDate">
+      <widget class="QLabel" name="label">
        <property name="text">
         <string>Date :</string>
        </property>
@@ -272,27 +272,9 @@
       </widget>
      </item>
      <item>
-      <widget class="QSpinBox" name="snbDate">
-       <property name="inputMethodHints">
-        <set>Qt::ImhDigitsOnly|Qt::ImhPreferNumbers</set>
-       </property>
-       <property name="wrapping">
-        <bool>false</bool>
-       </property>
-       <property name="frame">
-        <bool>false</bool>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-       <property name="readOnly">
-        <bool>true</bool>
-       </property>
-       <property name="buttonSymbols">
-        <enum>QAbstractSpinBox::NoButtons</enum>
-       </property>
-       <property name="maximum">
-        <number>9999</number>
+      <widget class="QLabel" name="labelDate">
+       <property name="text">
+        <string/>
        </property>
       </widget>
      </item>

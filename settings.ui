@@ -118,6 +118,9 @@
      <height>27</height>
     </rect>
    </property>
+   <property name="minimum">
+    <number>1</number>
+   </property>
   </widget>
   <widget class="QComboBox" name="cmbMode">
    <property name="geometry">

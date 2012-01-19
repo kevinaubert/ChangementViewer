@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'settings.ui'
 #
-# Created: Wed Jan 18 14:54:45 2012
+# Created: Thu Jan 19 12:07:22 2012
 #      by: PyQt4 UI code generator 4.8.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -55,6 +55,7 @@ class Ui_settings(object):
         self.tabSelectedFields.horizontalHeader().setStretchLastSection(True)
         self.snbClasses = QtGui.QSpinBox(settings)
         self.snbClasses.setGeometry(QtCore.QRect(40, 80, 59, 27))
+        self.snbClasses.setMinimum(1)
         self.snbClasses.setObjectName(_fromUtf8("snbClasses"))
         self.cmbMode = QtGui.QComboBox(settings)
         self.cmbMode.setGeometry(QtCore.QRect(20, 130, 85, 27))

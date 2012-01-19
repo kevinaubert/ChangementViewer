@@ -58,7 +58,7 @@ class ChangementViewer:
         self.dock = uic.loadUi( os.path.join( path, "ui_changementviewer.ui" ) )
         self.iface.addDockWidget( Qt.BottomDockWidgetArea, self.dock )
         QObject.connect(self.dock.btnSettings, SIGNAL('clicked()'),self.showSettingsDialog)
-        QObject.connect(self.dock.timeSlide,SIGNAL('valueChanged(int)'),self.dock.snbDate.setValue)
+        QObject.connect(self.dock.timeSlide,SIGNAL('valueChanged(int)'),self.selectedField)
 
     def unload(self):
         # Remove the plugin menu item and icon
@@ -91,8 +91,6 @@ class ChangementViewer:
         QObject.connect(self.settingsDialog.btnOk, SIGNAL('clicked()'),self.settingsDialog.close) # close the settings dialog
         QObject.connect(self.settingsDialog.btnOk, SIGNAL('clicked()'),self.selectedField) # load the layer properties dialog
         QObject.connect(self.settingsDialog.btnApply, SIGNAL('clicked()'),self.selectedField) # load the layer properties dialog
-        QObject.connect( self.settingsDialog.tabSelectedFields, SIGNAL( 'itemDoubleClicked()' ), self.updateSelectedFields )
-
         
     def updateFields( self ):
         layName = unicode( self.settingsDialog.cmbLayers.currentText() )
@@ -124,11 +122,9 @@ class ChangementViewer:
                         sdate=date[u]
                         self.addRowToOptionsTable(layerName,sdate)
         self.settingsDialog.tabSelectedFields.sortItems(1,order = Qt.AscendingOrder)
-        a=self.settingsDialog.tabSelectedFields.item(0,1)
         n=self.settingsDialog.tabSelectedFields.rowCount()
-        b=self.settingsDialog.tabSelectedFields.item(n-1,1)
-        self.dock.timeSlide.setMinimum(int(a.text()))
-        self.dock.timeSlide.setMaximum(int(b.text()))
+        self.dock.timeSlide.setMinimum(0)
+        self.dock.timeSlide.setMaximum(n-1)
 
         
     def addRowToOptionsTable(self,layerName,sdate):
@@ -161,18 +157,19 @@ class ChangementViewer:
             lstModes = ["EqualInterval", "Quantile", "Empty"] 
         #fill the mode combobox    
         self.settingsDialog.cmbMode.addItems( lstModes )
-        
-        
-        #"""faire un selectedFieldBefore et un selectedFieldAfter pour les déplacements du slider ?"""        
+       
     def selectedField(self):
         layName = unicode( self.settingsDialog.cmbLayers.currentText() )
         if layName != "Layers":
             vLayer = gettings.getVectorLayerByName( layName )
         else:
             vLayer=self.iface.mapCanvas().currentLayer()
-        firstField=self.settingsDialog.tabSelectedFields.item(0,0)
-        fieldName=firstField.text()
-        self.ApplyClicked(vLayer,fieldName)
+        u=self.dock.timeSlide.value()
+        fieldName=self.settingsDialog.tabSelectedFields.item(u,0)
+        date=self.settingsDialog.tabSelectedFields.item(u,1)
+        self.dock.labelDate.setText(date.text())
+        self.ApplyClicked(vLayer,fieldName.text())
+        self.dock.timeSlide.setPageStep(1)
               
     def ApplyClicked(self,vLayer,fieldName):
         # Set the numeric field and the number of classes to be generated
