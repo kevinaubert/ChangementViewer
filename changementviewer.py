@@ -28,6 +28,7 @@ from PyQt4 import uic
 from PyQt4 import QtGui
 import os, sys,re
 import pdb
+from time import sleep
 sys.path.append("~/.qgis/python")
 # Initialize Qt resources from file resources.py
 import resources
@@ -66,7 +67,7 @@ class ChangementViewer:
         self.settingsDialog.cmbLayers.addItems( lstLayers )
         QObject.connect(self.dock.pushButtonBack,SIGNAL('clicked()'),self.stepBackward)
         QObject.connect(self.dock.pushButtonForward,SIGNAL('clicked()'),self.stepForward)
-        #QObject.connect(self.dock.pushButtonPlay,SIGNAL('clicked()'),self.playClicked) 
+        QObject.connect(self.dock.pushButtonPlay,SIGNAL('clicked()'),self.stepPlay) 
 
     def unload(self):
         # Remove the plugin menu item and icon
@@ -230,3 +231,15 @@ class ChangementViewer:
     def stepBackward(self):
         u=self.dock.timeSlide.value()
         self.dock.timeSlide.setValue(u-1)
+        
+    def stepPlay(self):
+        #boucle : while u différent de umax ? do =>
+        u=self.dock.timeSlide.value()
+        n=self.settingsDialog.tabSelectedFields.rowCount()
+        umax=n-1
+        while u!=umax:
+           sleep(3)
+           self.stepForward()
+           u=u+1
+           self.selectedField()
+        #QTimer.singleShot (5000, self.stepForward())
