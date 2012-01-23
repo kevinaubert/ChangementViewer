@@ -104,7 +104,9 @@ class ChangementViewer:
         if layName != "Layers":
             self.showModelist()
             vLayer = gettings.getVectorLayerByName( layName )
-            lstFields = vLayer.dataProvider().fields()
+            # Modif RC ici
+            lstFields = vLayer.pendingFields()
+            #lstFields = vLayer.dataProvider().fields()
             for i in lstFields:
               self.settingsDialog.ltbFields.addItem( unicode( lstFields[i].name() ) )
               
@@ -112,7 +114,9 @@ class ChangementViewer:
         # update selected fields
         layName = unicode( self.settingsDialog.cmbLayers.currentText() )
         vLayer = gettings.getVectorLayerByName( layName )
-        lstFields = vLayer.dataProvider().fields()
+        
+        lstFields = vLayer.pendingFields()
+        #lstFields = vLayer.dataProvider().fields()
         myfields = self.settingsDialog.ltbFields     
         self.settingsDialog.tabSelectedFields.clear()
         self.settingsDialog.tabSelectedFields.setRowCount(0)
