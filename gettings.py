@@ -66,6 +66,7 @@ def getFieldList( vlayer ):
 	#allAttrs = vprovider.attributeIndexes()
 	#vprovider.select( allAttrs )
 	#myFields = vprovider.fields()
+          myFields= vlayer.createJoinCaches()
           myFields= vlayer.updateFieldMap()
           return myFields
  

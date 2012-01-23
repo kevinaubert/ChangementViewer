@@ -53,12 +53,20 @@ class ChangementViewer:
         self.iface.addToolBarIcon(self.action)
         self.iface.addPluginToMenu("&Changement Viewer", self.action)
 
-        # load the form
+        # load the forms and connect actions
         path = os.path.dirname( os.path.abspath( __file__ ) )
         self.dock = uic.loadUi( os.path.join( path, "ui_changementviewer.ui" ) )
         self.iface.addDockWidget( Qt.BottomDockWidgetArea, self.dock )
+        path = os.path.dirname( os.path.abspath( __file__ ) )
+        self.settingsDialog = uic.loadUi(os.path.join(path,"settings.ui"))
         QObject.connect(self.dock.btnSettings, SIGNAL('clicked()'),self.showSettingsDialog)
         QObject.connect(self.dock.timeSlide,SIGNAL('valueChanged(int)'),self.selectedField)
+        self.settingsDialog.cmbLayers.addItem( "Layers" )
+        lstLayers = gettings.getLayersNames( "vector" )
+        self.settingsDialog.cmbLayers.addItems( lstLayers )
+        QObject.connect(self.dock.pushButtonBack,SIGNAL('clicked()'),self.stepBackward)
+        QObject.connect(self.dock.pushButtonForward,SIGNAL('clicked()'),self.stepForward)
+        #QObject.connect(self.dock.pushButtonPlay,SIGNAL('clicked()'),self.playClicked) 
 
     def unload(self):
         # Remove the plugin menu item and icon
@@ -70,16 +78,14 @@ class ChangementViewer:
         self.dock = True
         
     def showSettingsDialog(self):
-        # load the form
-        path = os.path.dirname( os.path.abspath( __file__ ) )
-        self.settingsDialog = uic.loadUi(os.path.join(path,"settings.ui"))
+        # show the form
         self.settingsDialog.show()
                 
         # fill layers combobox
-        self.settingsDialog.cmbLayers.clear()
-        self.settingsDialog.cmbLayers.addItem( "Layers" )
+        #self.settingsDialog.cmbLayers.clear()
+        #self.settingsDialog.cmbLayers.addItem( "Layers" )
         lstLayers = gettings.getLayersNames( "vector" )
-        self.settingsDialog.cmbLayers.addItems( lstLayers )
+        #self.settingsDialog.cmbLayers.addItems( lstLayers )
         if len(lstLayers) == 0:
             QtGui.QMessageBox.warning(None,'Error','There are no unmanaged vector layers in the project !')
             pass
@@ -88,7 +94,7 @@ class ChangementViewer:
         QObject.connect( self.settingsDialog.cmbLayers, SIGNAL( "currentIndexChanged(QString)" ), self.updateFields ) #for tracking layers change      
         QObject.connect( self.settingsDialog.ltbFields, SIGNAL( 'itemSelectionChanged()' ), self.updateSelectedFields ) # for tracking fields selection              
         QObject.connect(self.settingsDialog.btnCancel, SIGNAL('clicked()'),self.settingsDialog.close) # close the settings dialog
-        QObject.connect(self.settingsDialog.btnOk, SIGNAL('clicked()'),self.settingsDialog.close) # close the settings dialog
+        QObject.connect(self.settingsDialog.btnOk, SIGNAL('clicked()'),self.settingsDialog.hide) # close the settings dialog
         QObject.connect(self.settingsDialog.btnOk, SIGNAL('clicked()'),self.selectedField) # load the layer properties dialog
         QObject.connect(self.settingsDialog.btnApply, SIGNAL('clicked()'),self.selectedField) # load the layer properties dialog
         
@@ -125,8 +131,7 @@ class ChangementViewer:
         n=self.settingsDialog.tabSelectedFields.rowCount()
         self.dock.timeSlide.setMinimum(0)
         self.dock.timeSlide.setMaximum(n-1)
-
-        
+       
     def addRowToOptionsTable(self,layerName,sdate):
         #insert selected fields in tabSelectedFields
         
@@ -213,3 +218,11 @@ class ChangementViewer:
             self.iface.legendInterface().refreshLayerSymbology(vLayer)
         else:
             QtGui.QMessageBox.warning(None,'Error','You have to choose a discretization mode')
+            
+    def stepForward(self):
+        u=self.dock.timeSlide.value()
+        self.dock.timeSlide.setValue(u+1)
+
+    def stepBackward(self):
+        u=self.dock.timeSlide.value()
+        self.dock.timeSlide.setValue(u-1)
