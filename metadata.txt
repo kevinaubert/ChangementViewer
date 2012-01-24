@@ -27,7 +27,7 @@ tags=
 homepage=
 tracker=
 repository=
-icon=icon.png
+icon=
 # experimental flag
 experimental=False
 

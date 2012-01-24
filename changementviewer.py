@@ -76,7 +76,7 @@ class ChangementViewer:
         self.iface.removeDockWidget(self.dock)
 
     def run(self):
-        self.dock = True
+        self.dock.show()
         
     def showSettingsDialog(self):
         # show the form
@@ -241,5 +241,4 @@ class ChangementViewer:
            sleep(3)
            self.stepForward()
            u=u+1
-           self.selectedField()
-        #QTimer.singleShot (5000, self.stepForward())
+           #self.selectedField()

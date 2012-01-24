@@ -23,7 +23,7 @@ PLUGINNAME = changementviewer
 
 PY_FILES = changementviewer.py changementviewerdialog.py __init__.py
 
-EXTRAS = icon.png 
+EXTRAS =
 
 UI_FILES = ui_changementviewer.py
 
