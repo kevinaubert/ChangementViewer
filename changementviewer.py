@@ -194,9 +194,15 @@ class ChangementViewer:
                 # new symbology - subclass of QgsFeatureRendererV2 class
                 sym = QgsSymbolV2.defaultSymbol(vLayer.geometryType())
                 ramp=QgsVectorGradientColorRampV2(QColor(0,255,0),QColor(255,0,0))
-                rendererV2 = QgsGraduatedSymbolRendererV2.createRenderer ( vLayer, fieldName, numberOfClasses, mode, sym, ramp )
+                mysymbolrenderer = QgsGraduatedSymbolRendererV2()
+                rendererV2 = mysymbolrenderer.createRenderer ( vLayer, fieldName, numberOfClasses, mode, sym, ramp )
+                #rendererV2 = QgsGraduatedSymbolRendererV2.createRenderer ( vLayer, fieldName, numberOfClasses, mode, sym, ramp )
+                range1 = QgsRendererRangeV2(4,5,QgsSymbolV2.defaultSymbol(vLayer.geometryType()), QString("testlabel"))
+                range2 = QgsRendererRangeV2(1,2,QgsSymbolV2.defaultSymbol(vLayer.geometryType()), QString("testlabel2"))
+                myrangelist = [range1, range2]
+                rendererV3 = QgsGraduatedSymbolRendererV2(QString("test91"), myrangelist)
                 rendererV2.setRotationField(fieldName)        
-                vLayer.setRendererV2( rendererV2 )
+                vLayer.setRendererV2( rendererV3 )
             else:
                 # old symbology - subclass of QgsRenderer class
                 # Create the renderer object to be associated to the layer later
