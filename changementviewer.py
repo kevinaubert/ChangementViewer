@@ -42,6 +42,7 @@ class ChangementViewer:
         # Save reference to the QGIS interface
         self.iface = iface
         self.settingsDialog = None
+        self.tmpRenderer = None
         
     def initGui(self):
         # Create action that will start plugin configuration
@@ -186,14 +187,13 @@ class ChangementViewer:
             self.ApplyClicked(vLayer,fieldName.text())
         self.dock.timeSlide.setPageStep(1)
 
-    def absolu(self,vLayer,fieldName):
+    def totalLayer(self,vLayer):
         # Create temp layer with an attribute that will contain all the selected fields values
         geometryTypes = ['POINT', 'LINESTRING', 'POLYGON']
         tmpLayer = QgsVectorLayer(geometryTypes[vLayer.geometryType()], "tmpLayer", "memory")
         tmpProvider = tmpLayer.dataProvider()
         tmpProvider.addAttributes([QgsField("myvalues", QVariant.Double)])
         tmpLayer.commitChanges()
-        
         # We access to features with the dataProviders, for reading (in vLayer) and writing (in tmpLayer)
         vProvider = vLayer.dataProvider()
         allAttrs = vProvider.attributeIndexes()
@@ -215,15 +215,18 @@ class ChangementViewer:
                 newfeat.addAttribute(int(0), QVariant(feat.attributeMap()[int(fldIndex)].toDouble()[0]))     
                 tmpProvider.addFeatures( [newfeat] )
                 tmpLayer.commitChanges()
-        tmpLayer.updateExtents()       
-
-        #print tmpLayer
+        tmpLayer.updateExtents() 
+        
         numberOfClasses =self.settingsDialog.snbClasses.value()
         mode=(self.settingsDialog.cmbMode.currentIndex()-1)
         sym = QgsSymbolV2.defaultSymbol(vLayer.geometryType())
         ramp=QgsVectorGradientColorRampV2(QColor(0,255,0),QColor(255,0,0))
-        tmpRenderer = QgsGraduatedSymbolRendererV2().createRenderer ( tmpLayer, "myvalues", numberOfClasses, mode, sym, ramp )
-        absoluteRenderer = QgsGraduatedSymbolRendererV2(fieldName, tmpRenderer.ranges())
+        self.tmpRenderer = QgsGraduatedSymbolRendererV2().createRenderer ( tmpLayer, "myvalues", numberOfClasses, mode, sym, ramp )
+        
+    def absolu(self,vLayer,fieldName):
+        if self.tmpRenderer == None:
+            self.totalLayer(vLayer)
+        absoluteRenderer = QgsGraduatedSymbolRendererV2(fieldName, self.tmpRenderer.ranges())
         absoluteRenderer.setRotationField(fieldName)
         vLayer.setRendererV2( absoluteRenderer )
         self.iface.mapCanvas().refresh()
@@ -286,18 +289,20 @@ class ChangementViewer:
         umax=n-1
         while u!=umax:
         #for u in range(n-1):
-           sleep(2)
-           self.stepForward()
-           u=u+1
-           #self.selectedField()
-        self.saveAnimation= False
-        
-    def exportVideo(self):
-        """export 'video' - currently only image sequence"""
+            #QTimer.singleShot(2000, self.stepForward)
+            t = threading.Timer(2.0, self.stepForward)
+            t.start()
+            u=u+1
+            #self.iface.mapCanvas().refresh()
+            #u=u+1
+        #self.saveAnimation= False
+    """    
+   def exportVideo(self):
+        #export 'video' - currently only image sequence
         self.saveAnimationPath = str(QFileDialog.getExistingDirectory (self.iface.mainWindow(),'Pick export destination',self.saveAnimationPath))
         if self.saveAnimationPath:
             self.saveAnimation = True
             self.loopAnimation = False # on export looping has to be deactivated
             self.stepPlay()
             QMessageBox.information(self.iface.mainWindow(),'Export Video','Image sequence is being saved to '+self.saveAnimationPath+'.\n\nPlease wait until the process is finished.')      
-
+"""
