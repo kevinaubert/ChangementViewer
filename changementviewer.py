@@ -272,7 +272,19 @@ class ChangementViewer:
         n=self.settingsDialog.tabSelectedFields.rowCount()
         umax=n-1
         while u!=umax:
-           sleep(3)
+        #for u in range(n-1):
+           sleep(2)
            self.stepForward()
            u=u+1
            #self.selectedField()
+        self.saveAnimation= False
+        
+    def exportVideo(self):
+        """export 'video' - currently only image sequence"""
+        self.saveAnimationPath = str(QFileDialog.getExistingDirectory (self.iface.mainWindow(),'Pick export destination',self.saveAnimationPath))
+        if self.saveAnimationPath:
+            self.saveAnimation = True
+            self.loopAnimation = False # on export looping has to be deactivated
+            self.stepPlay()
+            QMessageBox.information(self.iface.mainWindow(),'Export Video','Image sequence is being saved to '+self.saveAnimationPath+'.\n\nPlease wait until the process is finished.')      
+
