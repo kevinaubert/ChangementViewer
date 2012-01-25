@@ -145,6 +145,19 @@
     <string>OK</string>
    </property>
   </widget>
+  <widget class="QCheckBox" name="ccbAbsolu">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>240</y>
+     <width>191</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Discrétisation absolue</string>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>

@@ -178,8 +178,43 @@ class ChangementViewer:
         fieldName=self.settingsDialog.tabSelectedFields.item(u,0)
         date=self.settingsDialog.tabSelectedFields.item(u,1)
         self.dock.labelDate.setText(date.text())
-        self.ApplyClicked(vLayer,fieldName.text())
+        if self.settingsDialog.ccbAbsolu.isChecked():
+            # absolu discretization
+            self.absolu(vLayer,fieldName.text())
+        else:
+            #relative discretization
+            self.ApplyClicked(vLayer,fieldName.text())
         self.dock.timeSlide.setPageStep(1)
+
+    def absolu(self,vLayer,fieldName):
+        # create layer
+        #if = vLayer.geometryType()="Point"
+        tmpLayer = QgsVectorLayer("Point", "tmp_total", "memory")
+        vprovider = tmpLayer.dataProvider()
+        # add the field
+        vprovider.addAttributes([QgsField("values", QVariant.Double)])
+        # add a feature
+        fet = QgsFeature()
+        for i in range(self.settingsDialog.tabSelectedFields.rowCount()):
+            fldName=self.settingsDialog.tabSelectedFields.item(i,0)
+            fldIndex=vLayer.fieldNameIndex(fldName.text())
+            pr=vLayer.dataProvider()
+            pr.select([fldIndex])
+            fet=vLayer.selectedFeatures()
+            #for u in range(vLayer.featureCount()):
+            vprovider.addFeatures(fet)
+        tmpLayer.updateExtents()
+        #print tmpLayer
+        numberOfClasses =self.settingsDialog.snbClasses.value()
+        mode=(self.settingsDialog.cmbMode.currentIndex()-1)
+        sym = QgsSymbolV2.defaultSymbol(vLayer.geometryType())
+        ramp=QgsVectorGradientColorRampV2(QColor(0,255,0),QColor(255,0,0))
+        """rendererV2 = QgsGraduatedSymbolRendererV2().createRenderer ( tmpLayer, "values", numberOfClasses, mode, sym, ramp )
+        rendererV3 = QgsGraduatedSymbolRendererV2(fieldName, rendererV2.ranges())
+        rendererV3.setRotationField(fieldName)
+        vLayer.setRendererV2( rendererV3 )"""
+        self.iface.mapCanvas().refresh()
+        self.iface.legendInterface().refreshLayerSymbology(vLayer)
               
     def ApplyClicked(self,vLayer,fieldName):
         # Set the numeric field and the number of classes to be generated
@@ -191,18 +226,12 @@ class ChangementViewer:
         if modeName != "Mode":
             mode=(self.settingsDialog.cmbMode.currentIndex()-1)
             if self.iface.mapCanvas().currentLayer().isUsingRendererV2():
-                # new symbology - subclass of QgsFeatureRendererV2 class
+            # new symbology - subclass of QgsFeatureRendererV2 class
                 sym = QgsSymbolV2.defaultSymbol(vLayer.geometryType())
                 ramp=QgsVectorGradientColorRampV2(QColor(0,255,0),QColor(255,0,0))
-                mysymbolrenderer = QgsGraduatedSymbolRendererV2()
-                rendererV2 = mysymbolrenderer.createRenderer ( vLayer, fieldName, numberOfClasses, mode, sym, ramp )
-                #rendererV2 = QgsGraduatedSymbolRendererV2.createRenderer ( vLayer, fieldName, numberOfClasses, mode, sym, ramp )
-                range1 = QgsRendererRangeV2(4,5,QgsSymbolV2.defaultSymbol(vLayer.geometryType()), QString("testlabel"))
-                range2 = QgsRendererRangeV2(1,2,QgsSymbolV2.defaultSymbol(vLayer.geometryType()), QString("testlabel2"))
-                myrangelist = [range1, range2]
-                rendererV3 = QgsGraduatedSymbolRendererV2(QString("test91"), myrangelist)
+                rendererV2 = QgsGraduatedSymbolRendererV2.createRenderer ( vLayer, fieldName, numberOfClasses, mode, sym, ramp )
                 rendererV2.setRotationField(fieldName)        
-                vLayer.setRendererV2( rendererV3 )
+                vLayer.setRendererV2( rendererV2 )
             else:
                 # old symbology - subclass of QgsRenderer class
                 # Create the renderer object to be associated to the layer later
@@ -239,7 +268,6 @@ class ChangementViewer:
         self.dock.timeSlide.setValue(u-1)
         
     def stepPlay(self):
-        #boucle : while u différent de umax ? do =>
         u=self.dock.timeSlide.value()
         n=self.settingsDialog.tabSelectedFields.rowCount()
         umax=n-1
