@@ -187,32 +187,45 @@ class ChangementViewer:
         self.dock.timeSlide.setPageStep(1)
 
     def absolu(self,vLayer,fieldName):
-        # create layer
-        #if = vLayer.geometryType()="Point"
-        tmpLayer = QgsVectorLayer("Point", "tmp_total", "memory")
-        vprovider = tmpLayer.dataProvider()
-        # add the field
-        vprovider.addAttributes([QgsField("values", QVariant.Double)])
-        # add a feature
-        fet = QgsFeature()
+        # Create temp layer with an attribute that will contain all the selected fields values
+        geometryTypes = ['POINT', 'LINESTRING', 'POLYGON']
+        tmpLayer = QgsVectorLayer(geometryTypes[vLayer.geometryType()], "tmpLayer", "memory")
+        tmpProvider = tmpLayer.dataProvider()
+        tmpProvider.addAttributes([QgsField("myvalues", QVariant.Double)])
+        tmpLayer.commitChanges()
+        
+        # We access to features with the dataProviders, for reading (in vLayer) and writing (in tmpLayer)
+        vProvider = vLayer.dataProvider()
+        allAttrs = vProvider.attributeIndexes()
+        vProvider.select(allAttrs)
+        # We select all the attributes, and will access the ones with need later
+        # Loop from 0 to the count of selected Fields
         for i in range(self.settingsDialog.tabSelectedFields.rowCount()):
-            fldName=self.settingsDialog.tabSelectedFields.item(i,0)
-            fldIndex=vLayer.fieldNameIndex(fldName.text())
-            pr=vLayer.dataProvider()
-            pr.select([fldIndex])
-            fet=vLayer.selectedFeatures()
-            #for u in range(vLayer.featureCount()):
-            vprovider.addFeatures(fet)
-        tmpLayer.updateExtents()
+            tmpLayer.startEditing()
+            fldName = self.settingsDialog.tabSelectedFields.item(i,0)
+            fldIndex = vLayer.fieldNameIndex(fldName.text())
+            # fldIndex is the number of the field we want to access
+            feat = QgsFeature()
+            # Creation of a new feature
+            while vProvider.nextFeature(feat):
+                newfeat = QgsFeature()
+                # We give this feature the same geometry as in the origin layer
+                newfeat.setGeometry(feat.geometry())      
+                # Adding the value of the selected fieldindex/feature inside the newfeature                          
+                newfeat.addAttribute(int(0), QVariant(feat.attributeMap()[int(fldIndex)].toDouble()[0]))     
+                tmpProvider.addFeatures( [newfeat] )
+                tmpLayer.commitChanges()
+        tmpLayer.updateExtents()       
+
         #print tmpLayer
         numberOfClasses =self.settingsDialog.snbClasses.value()
         mode=(self.settingsDialog.cmbMode.currentIndex()-1)
         sym = QgsSymbolV2.defaultSymbol(vLayer.geometryType())
         ramp=QgsVectorGradientColorRampV2(QColor(0,255,0),QColor(255,0,0))
-        """rendererV2 = QgsGraduatedSymbolRendererV2().createRenderer ( tmpLayer, "values", numberOfClasses, mode, sym, ramp )
-        rendererV3 = QgsGraduatedSymbolRendererV2(fieldName, rendererV2.ranges())
-        rendererV3.setRotationField(fieldName)
-        vLayer.setRendererV2( rendererV3 )"""
+        tmpRenderer = QgsGraduatedSymbolRendererV2().createRenderer ( tmpLayer, "myvalues", numberOfClasses, mode, sym, ramp )
+        absoluteRenderer = QgsGraduatedSymbolRendererV2(fieldName, tmpRenderer.ranges())
+        absoluteRenderer.setRotationField(fieldName)
+        vLayer.setRendererV2( absoluteRenderer )
         self.iface.mapCanvas().refresh()
         self.iface.legendInterface().refreshLayerSymbology(vLayer)
               
