@@ -1,13 +1,11 @@
 <RCC>
     <qresource prefix="/plugins/changementviewer" >
         <file>icon.png</file>
-    </qresource>
-    <qresource prefix="/">
 	<file>images/power_off.png</file>
 	<file>images/back.png</file>
 	<file>images/forward.png</file>
 	<file>images/play.png</file>
 	<file>images/power_on.png</file>
 	<file>images/stop.png</file>
-    </qresource>
+    <qresource prefix="/">
 </RCC>

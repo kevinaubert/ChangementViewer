@@ -28,7 +28,7 @@ from PyQt4 import uic
 from PyQt4 import QtGui
 import os, sys,re
 import pdb
-from time import sleep
+import time
 sys.path.append("~/.qgis/python")
 # Initialize Qt resources from file resources.py
 import resources
@@ -43,6 +43,7 @@ class ChangementViewer:
         self.iface = iface
         self.settingsDialog = None
         self.tmpRenderer = None
+        self.timer = QTimer()
         
     def initGui(self):
         # Create action that will start plugin configuration
@@ -53,7 +54,7 @@ class ChangementViewer:
 
         # Add toolbar button and menu item
         self.iface.addToolBarIcon(self.action)
-        self.iface.addPluginToMenu("&Changement Viewer", self.action)
+        self.iface.addPluginToMenu("Changement Viewer", self.action)
 
         # load the forms and connect actions
         path = os.path.dirname( os.path.abspath( __file__ ) )
@@ -69,6 +70,7 @@ class ChangementViewer:
         QObject.connect(self.dock.pushButtonBack,SIGNAL('clicked()'),self.stepBackward)
         QObject.connect(self.dock.pushButtonForward,SIGNAL('clicked()'),self.stepForward)
         QObject.connect(self.dock.pushButtonPlay,SIGNAL('clicked()'),self.stepPlay) 
+        QObject.connect(self.dock.pushButtonStop,SIGNAL('clicked()'),self.stepStop) 
 
     def unload(self):
         # Remove the plugin menu item and icon
@@ -178,13 +180,14 @@ class ChangementViewer:
         u=self.dock.timeSlide.value()
         fieldName=self.settingsDialog.tabSelectedFields.item(u,0)
         date=self.settingsDialog.tabSelectedFields.item(u,1)
-        self.dock.labelDate.setText(date.text())
-        if self.settingsDialog.ccbAbsolu.isChecked():
-            # absolu discretization
-            self.absolu(vLayer,fieldName.text())
-        else:
-            #relative discretization
-            self.ApplyClicked(vLayer,fieldName.text())
+        if self.settingsDialog.tabSelectedFields.rowCount()!=0:
+            self.dock.labelDate.setText(date.text())
+            if self.settingsDialog.ccbAbsolu.isChecked():
+                # absolu discretization
+                self.absolu(vLayer,fieldName.text())
+            else:
+                #relative discretization
+                self.ApplyClicked(vLayer,fieldName.text())
         self.dock.timeSlide.setPageStep(1)
 
     def totalLayer(self,vLayer):
@@ -226,11 +229,16 @@ class ChangementViewer:
     def absolu(self,vLayer,fieldName):
         if self.tmpRenderer == None:
             self.totalLayer(vLayer)
-        absoluteRenderer = QgsGraduatedSymbolRendererV2(fieldName, self.tmpRenderer.ranges())
-        absoluteRenderer.setRotationField(fieldName)
-        vLayer.setRendererV2( absoluteRenderer )
-        self.iface.mapCanvas().refresh()
-        self.iface.legendInterface().refreshLayerSymbology(vLayer)
+        modeName = unicode( self.settingsDialog.cmbMode.currentText() )
+        if modeName != "Mode":
+            absoluteRenderer = QgsGraduatedSymbolRendererV2(fieldName, self.tmpRenderer.ranges())
+            absoluteRenderer.setRotationField(fieldName)
+            vLayer.setRendererV2( absoluteRenderer )
+            self.iface.mapCanvas().refresh()
+            self.iface.legendInterface().refreshLayerSymbology(vLayer)
+        else:
+            QtGui.QMessageBox.warning(None,'Error','You have to choose a discretization mode')
+        
               
     def ApplyClicked(self,vLayer,fieldName):
         # Set the numeric field and the number of classes to be generated
@@ -278,31 +286,20 @@ class ChangementViewer:
     def stepForward(self):
         u=self.dock.timeSlide.value()
         self.dock.timeSlide.setValue(u+1)
-
+        n=self.settingsDialog.tabSelectedFields.rowCount()
+        umax=n-1
+        if u == umax:
+            self.timer.stop()
+            self.dock.timeSlide.setValue(0)
+            
     def stepBackward(self):
         u=self.dock.timeSlide.value()
         self.dock.timeSlide.setValue(u-1)
         
     def stepPlay(self):
-        u=self.dock.timeSlide.value()
-        n=self.settingsDialog.tabSelectedFields.rowCount()
-        umax=n-1
-        while u!=umax:
-        #for u in range(n-1):
-            #QTimer.singleShot(2000, self.stepForward)
-            t = threading.Timer(2.0, self.stepForward)
-            t.start()
-            u=u+1
-            #self.iface.mapCanvas().refresh()
-            #u=u+1
-        #self.saveAnimation= False
-    """    
-   def exportVideo(self):
-        #export 'video' - currently only image sequence
-        self.saveAnimationPath = str(QFileDialog.getExistingDirectory (self.iface.mainWindow(),'Pick export destination',self.saveAnimationPath))
-        if self.saveAnimationPath:
-            self.saveAnimation = True
-            self.loopAnimation = False # on export looping has to be deactivated
-            self.stepPlay()
-            QMessageBox.information(self.iface.mainWindow(),'Export Video','Image sequence is being saved to '+self.saveAnimationPath+'.\n\nPlease wait until the process is finished.')      
-"""
+        self.timer.stop()
+        self.timer.timeout.connect(self.stepForward)
+        self.timer.start(self.settingsDialog.snbPlay.value()*1000)
+
+    def stepStop(self):
+        self.timer.stop()

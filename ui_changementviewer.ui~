@@ -69,42 +69,13 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="resources.qrc">
+        <iconset resource="../changementviewver/resources.qrc">
          <normaloff>:/images/play.png</normaloff>:/images/play.png</iconset>
        </property>
        <property name="checkable">
-        <bool>false</bool>
-       </property>
-       <property name="checked">
-        <bool>false</bool>
-       </property>
-       <property name="flat">
         <bool>true</bool>
        </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButtonStop">
-       <property name="maximumSize">
-        <size>
-         <width>16</width>
-         <height>16</height>
-        </size>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="resources.qrc">
-         <normaloff>:/images/stop.png</normaloff>:/images/stop.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>33</width>
-         <height>33</height>
-        </size>
-       </property>
-       <property name="checkable">
+       <property name="checked">
         <bool>false</bool>
        </property>
        <property name="flat">
@@ -130,7 +101,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="resources.qrc">
+        <iconset resource="../changementviewer/resources.qrc">
          <normaloff>:/images/back.png</normaloff>:/images/back.png</iconset>
        </property>
        <property name="iconSize">
@@ -193,7 +164,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="resources.qrc">
+        <iconset resource="../changementviewer/resources.qrc">
          <normaloff>:/images/forward.png</normaloff>:/images/forward.png</iconset>
        </property>
        <property name="flat">
@@ -237,7 +208,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="resources.qrc">
+        <iconset resource="../changementviewer/resources.qrc">
          <normaloff>:/images/power_off.png</normaloff>
          <normalon>:/images/power_on.png</normalon>:/images/power_off.png</iconset>
        </property>
@@ -341,7 +312,7 @@
   </widget>
  </widget>
  <resources>
-  <include location="resources.qrc"/>
+  <include location="../changementviewer/resources.qrc"/>
  </resources>
  <connections/>
 </ui>

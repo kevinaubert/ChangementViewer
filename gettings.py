@@ -61,11 +61,6 @@ def getVectorLayerByName( myName ):
 
 # return the field list of a vector layer
 def getFieldList( vlayer ):
-	#vprovider = vlayer.dataProvider()
-	#feat = QgsFeature()
-	#allAttrs = vprovider.attributeIndexes()
-	#vprovider.select( allAttrs )
-	#myFields = vprovider.fields()
           myFields= vlayer.createJoinCaches()
           myFields= vlayer.updateFieldMap()
           return myFields
