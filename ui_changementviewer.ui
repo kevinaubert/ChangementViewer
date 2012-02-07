@@ -214,7 +214,7 @@
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="QPushButton" name="pushButtonToggleTime">
+      <widget class="QPushButton" name="btnQ">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -319,22 +319,6 @@
         </size>
        </property>
       </spacer>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButtonExportVideo">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text">
-        <string>Export Video</string>
-       </property>
-      </widget>
      </item>
     </layout>
    </widget>

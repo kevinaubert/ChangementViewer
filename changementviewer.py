@@ -71,12 +71,14 @@ class ChangementViewer:
         QObject.connect(self.dock.pushButtonForward,SIGNAL('clicked()'),self.stepForward)
         QObject.connect(self.dock.pushButtonPlay,SIGNAL('clicked()'),self.stepPlay) 
         QObject.connect(self.dock.pushButtonStop,SIGNAL('clicked()'),self.stepStop) 
+        QObject.connect(self.dock.btnQ,SIGNAL('clicked()'),self.unload) 
 
     def unload(self):
         # Remove the plugin menu item and icon
         self.iface.removePluginMenu("&Changement Viewer",self.action)
         self.iface.removeToolBarIcon(self.action)
         self.iface.removeDockWidget(self.dock)
+        self.initGui()
 
     def run(self):
         self.dock.show()
@@ -199,8 +201,9 @@ class ChangementViewer:
         tmpLayer.commitChanges()
         # We access to features with the dataProviders, for reading (in vLayer) and writing (in tmpLayer)
         vProvider = vLayer.dataProvider()
-        allAttrs = vProvider.attributeIndexes()
-        vProvider.select(allAttrs)
+        lstFields = vLayer.pendingAllAttributesList()
+        #allAttrs = vProvider.attributeIndexes()
+        vProvider.select(lstFields)
         # We select all the attributes, and will access the ones with need later
         # Loop from 0 to the count of selected Fields
         for i in range(self.settingsDialog.tabSelectedFields.rowCount()):
