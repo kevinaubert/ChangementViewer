@@ -199,6 +199,7 @@ class ChangementViewer:
         self.dock.timeSlide.setPageStep(1)
 
     def totalLayer(self,vLayer):
+        vLayer.updateFieldMap()
         # Create temp layer with an attribute that will contain all the selected fields values
         geometryTypes = ['POINT', 'LINESTRING', 'POLYGON']
         tmpLayer = QgsVectorLayer(geometryTypes[vLayer.geometryType()], "tmpLayer", "memory")
@@ -219,7 +220,9 @@ class ChangementViewer:
             # fldIndex is the number of the field we want to access
             feat = QgsFeature()
             # Creation of a new feature
+            #joinInfo=vLayer.joinForFieldIndex([int(fldIndex)].toDouble()[0],vProvider.maximumIndex(),int(0))
             while vProvider.nextFeature(feat):
+                #tmpLayer.addJoinedFeatureAttributes(feat, joinInfo, fldName.text(), QVariant(feat.attributeMap()[int(fldIndex)].toDouble()[0]), lstFields, int(0) )  
                 newfeat = QgsFeature()
                 # We give this feature the same geometry as in the origin layer
                 newfeat.setGeometry(feat.geometry())      
