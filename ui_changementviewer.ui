@@ -238,8 +238,7 @@
        </property>
        <property name="icon">
         <iconset resource="resources.qrc">
-         <normaloff>:/images/power_off.png</normaloff>
-         <normalon>:/images/power_on.png</normalon>:/images/power_off.png</iconset>
+         <normaloff>:/images/refresh.png</normaloff>:/images/refresh.png</iconset>
        </property>
        <property name="iconSize">
         <size>

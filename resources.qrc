@@ -9,5 +9,6 @@
 	<file>images/play.png</file>
 	<file>images/power_on.png</file>
 	<file>images/stop.png</file>
+	<file>images/refresh.png</file>
     </qresource>
 </RCC>

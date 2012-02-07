@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_changementviewer.ui'
 #
-# Created: Tue Feb  7 11:47:32 2012
+# Created: Tue Feb  7 12:12:57 2012
 #      by: PyQt4 UI code generator 4.8.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -116,8 +116,7 @@ class Ui_ChangementViewer(object):
         self.btnQ.setMaximumSize(QtCore.QSize(23, 23))
         self.btnQ.setText(_fromUtf8(""))
         icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap(_fromUtf8(":/images/power_off.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        icon4.addPixmap(QtGui.QPixmap(_fromUtf8(":/images/power_on.png")), QtGui.QIcon.Normal, QtGui.QIcon.On)
+        icon4.addPixmap(QtGui.QPixmap(_fromUtf8(":/images/refresh.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.btnQ.setIcon(icon4)
         self.btnQ.setIconSize(QtCore.QSize(18, 18))
         self.btnQ.setCheckable(True)
