@@ -71,14 +71,20 @@ class ChangementViewer:
         QObject.connect(self.dock.pushButtonForward,SIGNAL('clicked()'),self.stepForward)
         QObject.connect(self.dock.pushButtonPlay,SIGNAL('clicked()'),self.stepPlay) 
         QObject.connect(self.dock.pushButtonStop,SIGNAL('clicked()'),self.stepStop) 
-        QObject.connect(self.dock.btnQ,SIGNAL('clicked()'),self.unload) 
+        QObject.connect(self.dock.btnQ,SIGNAL('clicked()'),self.refresh) 
+
+    def refresh(self):
+        # Remove the plugin menu item and icon
+        self.iface.removePluginMenu("&Changement Viewer",self.action)
+        self.iface.removeToolBarIcon(self.action)
+        self.iface.removeDockWidget(self.dock)
+        self.initGui()
 
     def unload(self):
         # Remove the plugin menu item and icon
         self.iface.removePluginMenu("&Changement Viewer",self.action)
         self.iface.removeToolBarIcon(self.action)
         self.iface.removeDockWidget(self.dock)
-        self.initGui()
 
     def run(self):
         self.dock.show()
