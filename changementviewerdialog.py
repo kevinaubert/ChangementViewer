@@ -2,7 +2,7 @@
 /***************************************************************************
  ChangementViewerDialog
                                  A QGIS plugin
- Temporal evolution viewer for statistic visualisation
+ Temporal evolution viewer for statistical calculations
                              -------------------
         begin                : 2012-01-06
         copyright            : (C) 2012 by Kevin Aubert

@@ -9,9 +9,9 @@
 
 
 [general]
-name=Temporal evolution viewer for statistic
+name=Temporal evolution viewer for statistics
 qgisMinimumVersion=1.0
-description=Temporal evolution viewer for statistic visualisation
+description=Temporal evolution viewer for statistical calculations
 version=0.1
 
 # end of mandatory metadata

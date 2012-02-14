@@ -2,7 +2,7 @@
 /***************************************************************************
  ChangementViewer
                                  A QGIS plugin
- Temporal evolution viewer for statistic visualisation
+ Temporal evolution viewer for statistical calculations
                              -------------------
         begin                : 2012-01-06
         copyright            : (C) 2012 by Kevin Aubert
@@ -22,7 +22,7 @@
 def name():
     return "Changement Viewer"
 def description():
-    return "Temporal evolution viewer for statistic visualisation"
+    return "Temporal evolution viewer for statistical calculations"
 def version():
     return "Version 0.1"
 def qgisMinimumVersion():

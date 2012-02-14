@@ -3,7 +3,7 @@
 /***************************************************************************
  ChangementViewer
                                  A QGIS plugin
- Temporal evolution viewer for statistic visualisation
+ Temporal evolution viewer for statistical calculations
                               -------------------
         begin                : 2012-01-06
         copyright            : (C) 2012 by Kevin Aubert
@@ -90,9 +90,6 @@ class ChangementViewer:
         self.dock.show()
         
     def showSettingsDialog(self):
-        # show the form
-        self.settingsDialog.show()
-                
         # fill layers combobox
         #self.settingsDialog.cmbLayers.clear()
         #self.settingsDialog.cmbLayers.addItem( "Layers" )
@@ -101,14 +98,17 @@ class ChangementViewer:
         if len(lstLayers) == 0:
             QtGui.QMessageBox.warning(None,'Error','There are no unmanaged vector layers in the project !')
             pass
+        else:
+            # show the form
+            self.settingsDialog.show()
+            #connect
+            QObject.connect( self.settingsDialog.cmbLayers, SIGNAL( "currentIndexChanged(QString)" ), self.updateFields ) #for tracking layers change      
+            QObject.connect( self.settingsDialog.ltbFields, SIGNAL( 'itemSelectionChanged()' ), self.updateSelectedFields ) # for tracking fields selection              
+            QObject.connect(self.settingsDialog.btnCancel, SIGNAL('clicked()'),self.settingsDialog.close) # close the settings dialog
+            QObject.connect(self.settingsDialog.btnOk, SIGNAL('clicked()'),self.settingsDialog.hide) # close the settings dialog
+            QObject.connect(self.settingsDialog.btnOk, SIGNAL('clicked()'),self.selectedField) # load the layer properties dialog
+            QObject.connect(self.settingsDialog.btnApply, SIGNAL('clicked()'),self.selectedField) # load the layer properties dialog
 
-        #connect
-        QObject.connect( self.settingsDialog.cmbLayers, SIGNAL( "currentIndexChanged(QString)" ), self.updateFields ) #for tracking layers change      
-        QObject.connect( self.settingsDialog.ltbFields, SIGNAL( 'itemSelectionChanged()' ), self.updateSelectedFields ) # for tracking fields selection              
-        QObject.connect(self.settingsDialog.btnCancel, SIGNAL('clicked()'),self.settingsDialog.close) # close the settings dialog
-        QObject.connect(self.settingsDialog.btnOk, SIGNAL('clicked()'),self.settingsDialog.hide) # close the settings dialog
-        QObject.connect(self.settingsDialog.btnOk, SIGNAL('clicked()'),self.selectedField) # load the layer properties dialog
-        QObject.connect(self.settingsDialog.btnApply, SIGNAL('clicked()'),self.selectedField) # load the layer properties dialog
         
     def updateFields( self ):
         layName = unicode( self.settingsDialog.cmbLayers.currentText() )
@@ -118,9 +118,16 @@ class ChangementViewer:
             vLayer = gettings.getVectorLayerByName( layName )
             # Modif RC ici
             lstFields = vLayer.pendingFields()
-            #lstFields = vLayer.dataProvider().fields()
+            #proFields = vLayer.dataProvider().fields()
             for i in lstFields:
               self.settingsDialog.ltbFields.addItem( unicode( lstFields[i].name() ) )
+        #Joined fields control for absolute discretization
+        if len(lstFields.items()) > vLayer.dataProvider().fieldCount():
+            self.settingsDialog.ccbAbsolu.setVisible(0)
+            self.settingsDialog.ccbAbsolu.setChecked(0)
+        else:
+            self.settingsDialog.ccbAbsolu.setVisible(1)
+            self.settingsDialog.ccbAbsolu.setChecked(0)
               
     def updateSelectedFields (self ):
         # update selected fields
@@ -128,18 +135,18 @@ class ChangementViewer:
         vLayer = gettings.getVectorLayerByName( layName )
         
         lstFields = vLayer.pendingFields()
+        #lstIndex = dict([(field.name(), index) for index, field in lstFields.iteritems()])
         #lstFields = vLayer.dataProvider().fields()
         myfields = self.settingsDialog.ltbFields     
         self.settingsDialog.tabSelectedFields.clear()
         self.settingsDialog.tabSelectedFields.setRowCount(0)
         for i in range(len(myfields)):  
+        #for i in range(len(lstIndex)): 
             if myfields.item(i).isSelected() == True:
                 date=re.findall(r'\d+',lstFields[i].name())
                 if len(date)!=1:
-                    QtGui.QMessageBox.warning(None,'Error','Warning : there is no date information for this attribute !')
-                    pass                    
-                else:
-                    for u in range(len(date)):
+                    QtGui.QMessageBox.warning(None,'Error','Warning : there is no date information for this attribute !')                
+                for u in range(len(date)):
                         layerName=lstFields[i].name()
                         sdate=date[u]
                         self.addRowToOptionsTable(layerName,sdate)
@@ -147,6 +154,14 @@ class ChangementViewer:
         n=self.settingsDialog.tabSelectedFields.rowCount()
         self.dock.timeSlide.setMinimum(0)
         self.dock.timeSlide.setMaximum(n-1)
+
+        # Selected fields table headers
+        item1 = QtGui.QTableWidgetItem()
+        item1.setText(QtGui.QApplication.translate("settings", "Layers", None, QtGui.QApplication.UnicodeUTF8))
+        self.settingsDialog.tabSelectedFields.setHorizontalHeaderItem(0, item1)
+        item2 = QtGui.QTableWidgetItem()
+        item2.setText(QtGui.QApplication.translate("settings", "Date", None, QtGui.QApplication.UnicodeUTF8))
+        self.settingsDialog.tabSelectedFields.setHorizontalHeaderItem(1, item2)
        
     def addRowToOptionsTable(self,layerName,sdate):
         #insert selected fields in tabSelectedFields
@@ -208,9 +223,9 @@ class ChangementViewer:
         tmpLayer.commitChanges()
         # We access to features with the dataProviders, for reading (in vLayer) and writing (in tmpLayer)
         vProvider = vLayer.dataProvider()
-        lstFields = vLayer.pendingAllAttributesList()
-        #allAttrs = vProvider.attributeIndexes()
-        vProvider.select(lstFields)
+        #lstFields = vLayer.pendingAllAttributesList()
+        allAttrs = vProvider.attributeIndexes()
+        vProvider.select(allAttrs)
         # We select all the attributes, and will access the ones with need later
         # Loop from 0 to the count of selected Fields
         for i in range(self.settingsDialog.tabSelectedFields.rowCount()):
@@ -239,8 +254,8 @@ class ChangementViewer:
         self.tmpRenderer = QgsGraduatedSymbolRendererV2().createRenderer ( tmpLayer, "myvalues", numberOfClasses, mode, sym, ramp )
         
     def absolu(self,vLayer,fieldName):
-        if self.tmpRenderer == None:
-            self.totalLayer(vLayer)
+        #if self.tmpRenderer == None:
+        self.totalLayer(vLayer)
         modeName = unicode( self.settingsDialog.cmbMode.currentText() )
         if modeName != "Mode":
             absoluteRenderer = QgsGraduatedSymbolRendererV2(fieldName, self.tmpRenderer.ranges())

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'settings.ui'
 #
-# Created: Thu Jan 26 12:11:21 2012
+# Created: Wed Feb  8 11:04:39 2012
 #      by: PyQt4 UI code generator 4.8.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -46,12 +46,14 @@ class Ui_settings(object):
         self.tabSelectedFields.setColumnCount(2)
         self.tabSelectedFields.setRowCount(0)
         item = QtGui.QTableWidgetItem()
-        item.setText(QtGui.QApplication.translate("settings", "Layer", None, QtGui.QApplication.UnicodeUTF8))
+        item.setText(QtGui.QApplication.translate("settings", "Layers", None, QtGui.QApplication.UnicodeUTF8))
         self.tabSelectedFields.setHorizontalHeaderItem(0, item)
         item = QtGui.QTableWidgetItem()
         item.setText(QtGui.QApplication.translate("settings", "Date", None, QtGui.QApplication.UnicodeUTF8))
         self.tabSelectedFields.setHorizontalHeaderItem(1, item)
         self.tabSelectedFields.horizontalHeader().setDefaultSectionSize(128)
+        self.tabSelectedFields.horizontalHeader().setHighlightSections(True)
+        self.tabSelectedFields.horizontalHeader().setSortIndicatorShown(True)
         self.tabSelectedFields.horizontalHeader().setStretchLastSection(True)
         self.snbClasses = QtGui.QSpinBox(settings)
         self.snbClasses.setGeometry(QtCore.QRect(30, 130, 59, 27))

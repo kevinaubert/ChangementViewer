@@ -1,6 +1,6 @@
 """
 /***************************************************************************
- ChangementViewer
+ Gettings
                                  A QGIS plugin
  Temporal evolution viewer for statistic visualisation
                               -------------------
