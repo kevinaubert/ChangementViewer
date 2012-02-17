@@ -31,3 +31,5 @@ def classFactory(iface):
     # load ChangementViewer class from file ChangementViewer
     from changementviewer import ChangementViewer
     return ChangementViewer(iface)
+def icon():
+    return "icon.png"
