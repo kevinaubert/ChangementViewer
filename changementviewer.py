@@ -157,7 +157,7 @@ class ChangementViewer:
 
         # Selected fields table headers
         item1 = QtGui.QTableWidgetItem()
-        item1.setText(QtGui.QApplication.translate("settings", "Layers", None, QtGui.QApplication.UnicodeUTF8))
+        item1.setText(QtGui.QApplication.translate("settings", "Fields", None, QtGui.QApplication.UnicodeUTF8))
         self.settingsDialog.tabSelectedFields.setHorizontalHeaderItem(0, item1)
         item2 = QtGui.QTableWidgetItem()
         item2.setText(QtGui.QApplication.translate("settings", "Date", None, QtGui.QApplication.UnicodeUTF8))
@@ -186,11 +186,11 @@ class ChangementViewer:
         self.settingsDialog.cmbMode.addItem( "Mode" )
         if vLayer.isUsingRendererV2():
             # new symbology - subclass of QgsFeatureRendererV2 class
-            lstModes = ["EqualInterval", "Quantile", "Jenks", "StdDev" ,"Pretty"]
+            lstModes = ["EqualInterval", "Quantiles", "Jenks", "StdDev" ,"Pretty"]
 
         else:
             # old symbology - subclass of QgsRenderer class
-            lstModes = ["EqualInterval", "Quantile", "Empty"] 
+            lstModes = ["EqualInterval", "Quantiles", "Empty"] 
         #fill the mode combobox    
         self.settingsDialog.cmbMode.addItems( lstModes )
        

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'settings.ui'
 #
-# Created: Wed Feb  8 11:04:39 2012
+# Created: Mon Feb 20 20:56:39 2012
 #      by: PyQt4 UI code generator 4.8.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -46,7 +46,7 @@ class Ui_settings(object):
         self.tabSelectedFields.setColumnCount(2)
         self.tabSelectedFields.setRowCount(0)
         item = QtGui.QTableWidgetItem()
-        item.setText(QtGui.QApplication.translate("settings", "Layers", None, QtGui.QApplication.UnicodeUTF8))
+        item.setText(QtGui.QApplication.translate("settings", "Fields", None, QtGui.QApplication.UnicodeUTF8))
         self.tabSelectedFields.setHorizontalHeaderItem(0, item)
         item = QtGui.QTableWidgetItem()
         item.setText(QtGui.QApplication.translate("settings", "Date", None, QtGui.QApplication.UnicodeUTF8))
